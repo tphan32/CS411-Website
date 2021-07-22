@@ -1,4 +1,5 @@
 # CS411-Website
+---
 
 ## To run the app you need to do following things:
 ---
@@ -7,5 +8,6 @@
 3. If in case you don't have to set up Flask's environment, please read and do this https://code.visualstudio.com/docs/python/tutorial-flask
 
 ## Best tutorial for Flask:
+---
 https://cs50.harvard.edu/college/2021/spring/weeks/9/ 
 
