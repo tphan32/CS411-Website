@@ -1,7 +1,7 @@
 from datetime import datetime
 from app import database as db_helper
 from app import app
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session, jsonify
 from flask_session import Session
 
 app.config["SESSION_PERMANENT"] = False
@@ -13,6 +13,16 @@ def home():
     if not session.get("username"):
         return render_template("home.html")
     return redirect("/characterSheet")
+    
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
+@app.route("/searchHelper")
+def searchHelper():
+    key = request.args.get("q")
+    shows = db_helper.searchDB(key)
+    return jsonify(shows)
 
 @app.route("/login", methods=["POST"])
 def login():
