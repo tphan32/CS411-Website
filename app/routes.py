@@ -62,6 +62,17 @@ def characterSheet():
 def createNewSheet():
     return render_template("/newSheet.html")
 
+@app.route("/updWeapon", methods=["GET","POST"])
+def update_weapon():
+    input = []
+    if request.method == "POST":
+        old_name = request.form.get("oldname")
+        new_name = request.form.get("newname")
+        input.append(old_name)
+        input.append(new_name)
+        db_helper.update_weapon (input)
+    return redirect("/weapon")
+
 @app.route("/add", methods=["GET","POST"])
 def create():
     input = []
@@ -80,7 +91,7 @@ def create():
         input.append(weight)
         input.append(properties)
         input.append(category)
-        db_helper.insert_new_task (input)
+        db_helper.update_weapon (input)
     return redirect("/weapon")
 
 @app.route("/weapon/")
