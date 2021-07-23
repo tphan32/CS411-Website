@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Sheet
+{% endblock %}
+{% block content %}
+    {% if session["username"] %}
+        You are logged in as {{ session["username"] }}. <a href="/logout">Log out</a>.
+        {% if lvl == None %}
+            <div>
+                <button type="button" onclick="showCreate()" style="visibility:visible" id="showCreate"> Create New Character Sheet </button>
+            </div>
+
+        {% endif %}
+    {% endif %}
+
+    <div id="createDiv" style="display: none;">
+        <p>CHARACTER SHEET</p>
+    </div>
+
+    <script type="text/javascript">
+        function showCreate() {
+            document.getElementById("createDiv").style.display = "";
+            document.getElementById("showCreate").style.visibility = "hidden";
+        }
+    </script>
+{% endblock %}

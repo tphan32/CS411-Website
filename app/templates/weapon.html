@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}
+    Weapon
+{% endblock %}
+{% block content %}
+    <div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Weapons</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for name in weaponName %}
+            <tr>
+                <td>{{name}}</td>
+            </tr>
+        {% endfor %}    
+        </tbody>
+
+    </table>
+    </div>
+    <div>
+        <form action="/query2">
+            <button type="submit">Get Query 2</button>
+        </form>
+    </div>
+{% endblock %}
