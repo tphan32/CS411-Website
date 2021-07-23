@@ -2,11 +2,11 @@ from datetime import datetime
 from app import database as db_helper
 from app import app
 from flask import render_template, request, redirect, session, jsonify
-#from flask_session import Session
+from flask_session import Session
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-#Session(app)
+Session(app)
 
 @app.route("/")
 def home():
