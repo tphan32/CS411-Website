@@ -16,6 +16,9 @@ venv.bak/
 # Flask stuff
 instance/
 .webassets-cache
+flask_session/
+.flask_session/
+*.flask_session/
 
 # GCP settings private stuff
 app.yaml

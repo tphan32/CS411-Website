@@ -1,5 +1,4 @@
 from app import db
-
 def get_weaponName():
     conn = db.connect()
     query_results = conn.execute('SELECT * FROM Weapon LIMIT 15;').fetchall()
@@ -48,6 +47,20 @@ def get_query_1() -> dict:
         items.append(item)
     return items
 
+def searchDB(key):
+    conn = db.connect()
+    # Use %% https://stackoverflow.com/questions/42153376/python-mysql-error-when-i-use-s-in-execute
+    q = 'SELECT * FROM Weapon WHERE weaponName LIKE "{}"'.format(key+"%%") + ";"
+    shows = conn.execute(q).fetchall()
+    conn.close()
+    items = []
+    for result in shows:
+        item = {
+            "weaponName": result[0],
+        } 
+        items.append(item)
+    return items
+    
 def get_query_2() -> dict:
     query = '''
             SELECT gi1.itemName , gi1.price, gi1.weight, gi1.category 
