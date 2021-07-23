@@ -80,6 +80,13 @@ def weapon():
         ]
     return render_template("weapon.html", items = items)
 
+@app.route("/removeWeapon", methods=["POST"])
+def removeWeapon():
+    if request.method == "POST":
+        target = request.form.get("weaponName")
+        db_helper.remove_weaponName(target)
+    return redirect("/weapon/")
+
 @app.route("/about/")
 def about():
     return render_template("about.html")

@@ -1,8 +1,7 @@
 from app import db
 def get_weaponName():
     conn = db.connect()
-    query_results = conn.execute('SELECT * FROM Weapon LIMIT 15;').fetchall()
-    #query_results = [x for x in results]
+    query_results = conn.execute('SELECT * FROM Weapon;').fetchall()
     conn.close()
     items = []
     for result in query_results:
@@ -17,6 +16,12 @@ def get_weaponName():
         } 
         items.append(item)
     return items
+
+def remove_weaponName(target):
+    query = "DELETE FROM Weapon WHERE weaponName = '{}'".format(target)
+    conn = db.connect()
+    conn.execute(query)
+    conn.close()
 
 def get_query_1() -> dict:
     query = '''
