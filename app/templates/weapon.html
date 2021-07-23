@@ -7,22 +7,39 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Weapons</th>
+            <td>Name</td>
+            <td>Cost</td>
+            <td>Damage</td>
+            <td>Damage Type</td>
+            <td>Weight</td>
+            <td>Properties</td>
+            <td>Category</td>
         </tr>
         </thead>
         <tbody>
-        {% for name in weaponName %}
+        {% for item in items %}
             <tr>
-                <td>{{name}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.cost}}</td>
+                <td>{{item.damage}}</td>
+                <td>{{item.damageType}}</td>
+                <td>{{item.weight}}</td>
+                <td>{{item.properties}}</td>
+                <td>{{item.category}}</td>
             </tr>
         {% endfor %}    
         </tbody>
 
     </table>
     </div>
-    <div>
-        <form action="/query2">
-            <button type="submit">Get Query 2</button>
+
+    <!-- <div>
+        <form>
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname">
         </form>
-    </div>
+    </div> -->
+
 {% endblock %}

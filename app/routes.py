@@ -65,10 +65,20 @@ def createNewSheet():
 @app.route("/weapon/")
 def weapon():
     try:
-        weaponName = db_helper.get_weaponName()
+        items = db_helper.get_weaponName()
     except:
-        weaponName = ["error"]
-    return render_template("weapon.html", weaponName = weaponName)
+        items = [
+            {
+            "name"    : "error",
+            "cost"   : "error",
+            "damage"  : "error",
+            "damageType": "error",
+            "weight": "error",
+            "propoerties": "error",
+            "category": "error"
+            } 
+        ]
+    return render_template("weapon.html", items = items)
 
 @app.route("/about/")
 def about():
@@ -77,6 +87,21 @@ def about():
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
+
+@app.route("/query1")
+def query1():
+    try:
+        items = db_helper.get_query_1()
+    except:
+        items = [
+            {
+                "name"    : "error",
+                "level"   : "error",
+                "class"  : "error",
+                "SpellCastAbility": "error"
+            }
+        ]
+    return render_template("query1.html", items = items)
 
 @app.route("/query2/")
 def query2():
