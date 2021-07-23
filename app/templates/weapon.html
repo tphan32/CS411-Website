@@ -7,13 +7,13 @@
     <table class="table">
         <thead>
         <tr>
-            <td>Name</td>
-            <td>Cost</td>
-            <td>Damage</td>
-            <td>Damage Type</td>
-            <td>Weight</td>
-            <td>Properties</td>
-            <td>Category</td>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Damage</th>
+            <th>Damage Type</th>
+            <th>Weight</th>
+            <th>Properties</th>
+            <th>Category</th>
         </tr>
         </thead>
         <tbody>
@@ -32,10 +32,33 @@
 
     </table>
     </div>
+
     <div>
+        <h3> Delete values </h3>
         <form action="/removeWeapon" method="post">
             <input autocomplete="off" autofocus="off" placeholder="Weapon Name" name="weaponName" type="text">
             <input type="submit" name="submit_button" value="Remove">
         </form>
     </div>
+
+    <div>
+        <h3> Add values </h3>
+            <form action="/add" method="post">
+            <label for="name">Weapon name:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="cost">Cost:</label><br>
+            <input type="text" id="cost" name="cost"><br>
+            <label for="damage">Damage:</label><br>
+            <input type="text" id="damage" name="damage"><br>
+            <label for="damageType">Damage Type:</label><br>
+            <input type="text" id="damageType" name="damageType"><br>
+            <label for="weight">Weight:</label><br>
+            <input type="text" id="weight" name="weight"><br>
+            <label for="properties">Properties:</label><br>
+            <input type="text" id="properties" name="properties"><br>
+            <label for="category">Category:</label><br>
+            <input type="text" id="category" name="category"><br>
+            <button type="submit">Submit</button>
+            </form>
+        </div>
 {% endblock %}

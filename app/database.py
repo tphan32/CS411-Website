@@ -1,3 +1,4 @@
+from typing import List
 from app import db
 def get_weaponName():
     conn = db.connect()
@@ -20,6 +21,13 @@ def get_weaponName():
 def remove_weaponName(target):
     query = "DELETE FROM Weapon WHERE weaponName = '{}'".format(target)
     conn = db.connect()
+    conn.execute(query)
+    conn.close()
+
+def insert_new_task(input: List[str]):
+    conn = db.connect()
+    query = 'Insert Into Weapon (weaponName, cost, damage, damageType, weight, properties, category) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}");'.format(
+        input[0], int(input[1]), input[2], input[3], int(input[4]), input[5], input[6])
     conn.execute(query)
     conn.close()
 
