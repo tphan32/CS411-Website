@@ -28,7 +28,7 @@ def insert_new_task(input: List[str]):
     conn = db.connect()
     query = 'Insert Into Weapon (weaponName, cost, damage, damageType, weight, properties, category) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}");'.format(
         input[0], int(input[1]), input[2], input[3], int(input[4]), input[5], input[6])
-    query_results = conn.execute(query)
+    conn.execute(query)
     conn.close()
 
 def get_query_1() -> dict:
