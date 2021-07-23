@@ -2,13 +2,51 @@ from app import db
 
 def get_weaponName():
     conn = db.connect()
-    results = conn.execute('SELECT weaponName FROM Weapon;').fetchall()
-    query_results = [x for x in results]
+    query_results = conn.execute('SELECT * FROM Weapon LIMIT 15;').fetchall()
+    #query_results = [x for x in results]
     conn.close()
-    weaponName = []
+    items = []
     for result in query_results:
-        weaponName.append(result[0])
-    return weaponName
+        item = {
+            "name"    : result[0],
+            "cost"   : result[1],
+            "damage"  : result[2],
+            "damageType": result[3],
+            "weight": result[4],
+            "properties": result[5],
+            "category": result[6]
+        } 
+        items.append(item)
+    return items
+
+def get_query_1() -> dict:
+    query = '''
+            SELECT *
+            FROM
+                (SELECT Spells.name, level, classes, SpellCastAbility
+                FROM Class JOIN Spells ON (Class.className = Spells.classes)
+                WHERE Casting_Time = '1 reaction'
+
+                UNION
+
+                SELECT Spells.name, level, classes, SpellCastAbility
+                FROM Class JOIN Spells ON (Class.className = Spells.classes)
+                WHERE Casting_Time = '1 bonus action') AS combatNonActionSpells
+                LIMIT 15;
+            '''
+    conn = db.connect()
+    query_results = conn.execute(query).fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "level"   : result[1],
+            "class"  : result[2],
+            "SpellCastAbility": result[3]
+        } 
+        items.append(item)
+    return items
 
 def get_query_2() -> dict:
     query = '''
