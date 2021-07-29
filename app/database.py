@@ -34,7 +34,7 @@ def insert_new_task(input: List[str]):
 def update_weapon(input: List[str]):
     conn = db.connect()
     query = 'UPDATE Weapon SET weaponName = "{}" WHERE weaponName = "{}";'.format(input[1], input[0])
-    query_results = conn.execute(query)
+    conn.execute(query)
     conn.close()
 
 def get_query_1() -> dict:
