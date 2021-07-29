@@ -117,7 +117,7 @@ def removeWeapon():
     if request.method == "POST":
         target = request.form.get("weaponName")
         db_helper.remove_weaponName(target)
-    return redirect("/weapon/")
+    return redirect("/weapon/") 
 
 @app.route("/about/")
 def about():
@@ -156,3 +156,69 @@ def query2():
             }
         ]
     return render_template("query2.html", items = items)
+
+
+
+
+@app.route("/removeSpell", methods=["POST"])
+def removeSpell():
+    if request.method == "POST":
+        target = request.form.get("spellName")
+        db_helper.remove_spell(target)
+    return redirect("/spells")   
+
+@app.route("/spells/")
+def spells():
+    try:
+        items = db_helper.get_spellName()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "level"   : "error",
+            "school"  : "error",
+            "classes": "error",
+            "Casting_Time": "error",
+            "spellRange": "error",
+            "Components": "error",
+            "Duration": "error",
+            "description": "error"
+            } 
+        ]
+    return render_template("spells.html", items = items)
+
+@app.route("/updSpell", methods=["GET","POST"])
+def update_spell():
+    input = []
+    if request.method == "POST":
+        old_name = request.form.get("oldSpellname")
+        new_name = request.form.get("newSpellname")
+        input.append(old_name)
+        input.append(new_name)
+        db_helper.update_spell(input)
+    return redirect("/spells")
+
+@app.route("/addSpell", methods=["GET","POST"])
+def createSpell():
+    input = []
+    if request.method == "POST":
+        name = request.form.get("name")
+        level = request.form.get("level")
+        school = request.form.get("school")
+        classes = request.form.get("classes")
+        Casting_Time = request.form.get("Casting_Time")
+        spellRange = request.form.get("spellRange")
+        Components = request.form.get("Components")
+        Duration = request.form.get("Duration")
+        description = request.form.get("description")
+        input.append(name)
+        input.append(level)
+        input.append(school)
+        input.append(classes)
+        input.append(Casting_Time)
+        input.append(spellRange)
+        input.append(Components)
+        input.append(Duration)
+        input.append(description)
+        db_helper.add_spell(input)
+    return redirect("/spells")

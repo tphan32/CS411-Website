@@ -106,3 +106,43 @@ def get_query_2() -> dict:
         } 
         items.append(item)
     return items
+
+
+def get_spellName():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Spells;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "level"   : result[1],
+            "school"  : result[2],
+            "classes": result[3],
+            "Casting_Time": result[4],
+            "spellRange": result[5],
+            "Components": result[6],
+            "Duration": result[7],
+            "description": result[8]
+        } 
+        items.append(item)
+    return items
+
+def remove_spell(target):
+    query = "DELETE FROM Spells WHERE name = '{}'".format(target)
+    conn = db.connect()
+    conn.execute(query)
+    conn.close()
+
+
+def update_spell(input: List[str]):
+    conn = db.connect()
+    query = 'UPDATE Spells SET name = "{}" WHERE name = "{}";'.format(input[1], input[0])
+    query_results = conn.execute(query)
+    conn.close()
+
+def add_spell(input: List[str]):
+    conn = db.connect()
+    query = 'INSERT INTO Spells(name,level,school,classes,Casting_Time,spellRange,Components,Duration,description) VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");'.format(input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8])
+    query_results = conn.execute(query)
+    conn.close()

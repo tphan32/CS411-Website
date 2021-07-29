@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block title %}
+    Spells
+{% endblock %}
+{% block content %}
+    <div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Level</th>
+            <th>School</th>
+            <th>Class</th>
+            <th>Casting Time</th>
+            <th>Spell Range</th>
+            <th>Components</th>
+            <th>Duration</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.level}}</td>
+                <td>{{item.school}}</td>
+                <td>{{item.classes}}</td>
+                <td>{{item.Casting_Time}}</td>
+                <td>{{item.spellRange}}</td>
+                <td>{{item.Components}}</td>
+                <td>{{item.Duration}}</td>
+                <td>{{item.description}}</td>
+            </tr>
+        {% endfor %}    
+        </tbody>
+
+    </table>
+    </div>
+
+    <div>
+        <h3> Delete values </h3>
+        <form action="/removeSpell" method="post">
+            <input autocomplete="off" autofocus="off" placeholder="spellName" name="spellName" type="text">
+            <input type="submit" name="submit_button" value="Remove">
+        </form>
+    </div>
+
+    <div>
+        <h3> Update values </h3>
+            <form action="/updSpell" method="post">
+            <label for="oldSpellname">Old Spell name:</label><br>
+            <input type="text" id="oldSpellname" name="oldSpellname"><br>
+            <label for="newSpellname">New Spell name:</label><br>
+            <input type="text" id="newSpellname" name="newSpellname"><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div>
+        <h3> Add values </h3>
+            <form action="/addSpell" method="post">
+            <label for="name">Spell name:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="level">Level:</label><br>
+            <input type="text" id="level" name="level"><br>
+            <label for="school">School:</label><br>
+            <input type="text" id="school" name="school"><br>
+            <label for="classes">Class:</label><br>
+            <input type="text" id="classes" name="classes"><br>
+            <label for="Casting_Time">Casting Time:</label><br>
+            <input type="text" id="Casting_Time" name="Casting_Time"><br>
+            <label for="spellRange">Spell Range:</label><br>
+            <input type="text" id="spellRange" name="spellRange"><br>
+            <label for="Components">Components:</label><br>
+            <input type="text" id="Components" name="Components"><br>
+            <label for="Duration">Duration:</label><br>
+            <input type="text" id="Duration" name="Duration"><br>
+            <label for="description">Description:</label><br>
+            <input type="text" id="description" name="description"><br>
+            <button type="submit">Submit</button>
+            </form>
+        </div>
+{% endblock %}
