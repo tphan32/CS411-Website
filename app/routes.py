@@ -73,7 +73,7 @@ def update_weapon():
         db_helper.update_weapon (input)
     return redirect("/weapon")
 
-@app.route("/add/", methods=["POST"])
+@app.route("/add", methods=["POST"])
 def create():
     input = []
     if request.method == "POST":
@@ -92,7 +92,7 @@ def create():
         input.append(properties)
         input.append(category)
         db_helper.insert_new_task(input)
-    return redirect("/weapon")
+    return redirect("/weapon/")
 
 @app.route("/weapon/")
 def weapon():
