@@ -110,7 +110,7 @@ def get_query_2() -> dict:
 
 def get_spellName():
     conn = db.connect()
-    query_results = conn.execute('SELECT * FROM Spells;').fetchall()
+    query_results = conn.execute('SELECT * FROM Spells ORDER BY level;').fetchall()
     conn.close()
     items = []
     for result in query_results:
