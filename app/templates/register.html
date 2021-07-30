@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}
+    Home_Register
+{% endblock %}
+{% block content %}
+    <h1> Register </h1>
+
+    <p>
+        If you are here after attempting to login, then your username does not exist. Register here!
+        <br>
+        <br>
+        If you are here after you clicked register, then your username has been taken. Try another one!
+    </p>
+
+    <form action="/login" method="post">
+        <div>
+            <input autocomplete="off" autofocus="off" name ="username" placeholder="Username" type="text">
+        </div>
+        <div>
+        <div>
+            <input autocomplete="off" autofocus="off" name ="password" placeholder="Password" type="password">
+        </div>
+        <input type="submit" name="submit_button" value="Register">
+    </form>
+{% endblock %}

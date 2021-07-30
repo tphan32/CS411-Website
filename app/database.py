@@ -146,3 +146,38 @@ def add_spell(input: List[str]):
     query = 'INSERT INTO Spells(name,level,school,classes,Casting_Time,spellRange,Components,Duration,description) VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");'.format(input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8])
     query_results = conn.execute(query)
     conn.close()
+
+def register_user(input_user: str, input_password):
+    conn = db.connect()
+    user_exists = user_exist(input_user)
+    if user_exists == False:
+        query = 'INSERT INTO User(user_name, password) VALUES("{}","{}");'.format(input_user,input_password)
+        query_results = conn.execute(query)
+    conn.close()
+    return True
+
+def user_exist(input_user: str):
+    conn = db.connect()
+    user_exists_query = conn.execute('SELECT user_name FROM User WHERE user_name = \''+ input_user + '\';').fetchall()
+    user_exists = False
+    for result in user_exists_query:
+        if len(result) != 0:
+            user_exists = True
+    conn.close()
+    return user_exists
+
+def user_login(input_user: str, input_password: str):
+    password = ''
+    passwords = []
+    if user_exist(input_user) == True:
+        conn = db.connect()
+        passwords = conn.execute('SELECT password FROM User WHERE user_name = \''+ input_user + '\';').fetchall()
+    if len(passwords) != 0:
+        password = passwords[0][0]
+    if input_password == password and password != '':
+        return True
+    else:
+        return False
+        
+
+    

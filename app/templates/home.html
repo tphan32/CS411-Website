@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}
-    Home_Register
+    Home_Login
 {% endblock %}
 {% block content %}
-    <h1> Register </h1>
+    <h1> Login </h1>
 
     <form action="/login" method="post">
         <div>
@@ -13,7 +13,7 @@
         <div>
             <input autocomplete="off" autofocus="off" name ="password" placeholder="Password" type="text">
         </div>
+        <input type="submit" name="submit_button" value="Login">           
         <input type="submit" name="submit_button" value="Register" >
-        <input type="submit" name="submit_button" value="Login">
     </form>
 {% endblock %}

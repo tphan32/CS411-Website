@@ -24,30 +24,6 @@ def searchHelper():
     shows = db_helper.searchDB(key)
     return jsonify(shows)
 
-@app.route("/login", methods=["POST"])
-def login():
-    #TODO
-    #fetch username from db
-    usernameInDB = "ttp"
-    passwordInDB = "12345"
-    inputUserName = request.form.get("username")
-    inputPassWord = request.form.get("password")
-    #TODO
-    #check password is correct
-    if request.method == "POST" and request.form['submit_button'] == 'Login':
-        if inputUserName == usernameInDB and passwordInDB == inputPassWord:
-            session["username"] = inputUserName
-            return redirect("/characterSheet")
-        #TODO
-        #print error => wrong password
-    elif request.method == "POST" and request.form['submit_button'] == 'Register':
-        #TODO
-        #check if username is in db
-        #create a new username in db
-        session["username"] = inputUserName
-        return redirect("/characterSheet")
-    return render_template("home.html")
-
 @app.route("/logout")
 def logout():
     session["username"] = None
@@ -222,3 +198,38 @@ def createSpell():
         input.append(description)
         db_helper.add_spell(input)
     return redirect("/spells")
+
+@app.route("/login", methods=["POST"])
+def login():
+    inputUserName = request.form.get("username")
+    inputPassWord = request.form.get("password")
+
+    if request.method == "POST" and request.form['submit_button'] == 'Login':
+        #checks if the user exists
+        #checks if the login info is correct
+        user_exists = db_helper.user_exist(inputUserName)
+        access = db_helper.user_login(inputUserName, inputPassWord)
+
+        #If the user exists it checks the login info
+        #If login info is wrong, they go back to homepage
+        #If login info is right, they go to charactersheet
+        #If user does not exists, then they are taken to register
+
+        if user_exists:
+            if access:
+                session["username"] = inputUserName
+                return redirect("/characterSheet")
+            else:
+                return render_template("home.html")
+        else:
+            return render_template("register.html")
+
+    if request.method == "POST" and request.form['submit_button'] == 'Register':
+        
+        inputUserName = request.form.get("username")
+        inputPassWord = request.form.get("password")
+
+    if db_helper.register_user(inputUserName,inputPassWord) == True:
+        return render_template("home.html")
+    else:
+       return render_template("register.html")
