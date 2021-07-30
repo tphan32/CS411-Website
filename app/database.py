@@ -194,23 +194,27 @@ def get_class_name():
     return classes
 
 def get_race_name():
-    #conn = db.connect()
-    #query_results = conn.execute('SELECT Name FROM Race;').fetchall()
-    #conn.close()
-    query_results = ['Dragonborn','Dwarf','Elf','Gnome','Half-Elf', 'Half-Orc', 'Halfing', 'Human', 'Tiefling']
+    conn = db.connect()
+    query_results = conn.execute('SELECT raceName, abilityScoreIncrease1, abilityScoreIncrease2, ability1, ability2 FROM Race;').fetchall()
+    conn.close()
     races = []
     for result in query_results:
         item = {
-            #when fixing make sure result[0]
-            "name"    : result,
+            
+            "name"    : result[0],
+            "AB1" : result[1],
+            "AB2" : result[2],
+            "ABscore1" : result[3],
+            "ABscore2" : result[4]
         } 
         races.append(item)
+    print(item)
     return races
 
 
 def get_background_name():
     conn = db.connect()
-    query_results = conn.execute('SELECT DISTINCT backgroundName FROM BackgroundInfo;').fetchall()
+    query_results = conn.execute('SELECT DISTINCT source_name FROM TrainedProf WHERE source_type = \'background\';').fetchall()
     conn.close()
     backgrounds = []
     for result in query_results:
@@ -220,3 +224,23 @@ def get_background_name():
         backgrounds.append(item)
     return backgrounds
     
+def get_skills_name(from_where):
+    conn = db.connect()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\';').fetchall()
+    conn.close()
+    all = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+        } 
+        all.append(item)
+    if from_where not in ['Bard','Ranger', 'Rogue']:
+        all.append(2)
+    elif from_where == 'Rogue':
+        all.append(4)
+    elif from_where == 'Ranger' or from_where == 'Bard':
+        all.append(4)
+
+
+
+    return all

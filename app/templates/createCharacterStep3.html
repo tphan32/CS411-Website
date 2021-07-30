@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 3:
+{% endblock %}
+{% block content %}
+    
+
+<p>You gain skills from your choices:
+  <br>
+  <br>
+  <strong>Class: </strong>{{DNDclass}}
+  <br>
+  {{DNDCskills}}
+  <br>
+
+
+  <br>
+  <br>
+  <strong>Race: </strong>{{DNDrace}}
+  <br>
+  <!-- We are just going to take the first two skills if they have that many, choosing for this one is a bit wonky because not everyone chooses -->
+  <small>-&ensp;{{DNDRskills[0].name}}
+    <br>
+    -&ensp;{{DNDRskills[1].name}}
+    </small>
+    </p>
+
+  
+  <strong>Background: </strong>{{DNDbackground}}
+<br>
+
+<small>-&ensp;{{DNDBskills[0].name}}
+<br>
+-&ensp;{{DNDBskills[1].name}}
+</small>
+</p>
+
+
+
+  
+  
+{% endblock %}

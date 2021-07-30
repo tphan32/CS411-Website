@@ -19,7 +19,7 @@
     <label for="DNDrace">Choose a Race:</label>
     <select name="DNDrace" id="DNDrace">
       {% for item in races %}
-      <option value={{item.name}}>{{item.name}}</option>
+      <option value={{item.name}},{{item.AB1}},{{item.AB2}},{{item.ABscore1}},{{item.ABscore2}}>{{item.name}}</option>
       {% endfor %}  
     </select>
 

@@ -9,6 +9,13 @@
   }
   </style>
 
+
+<p>You have chosen:
+  <br>
+  <strong>Class: </strong>{{DNDclass}}
+  <br> <strong>Race: </strong>{{DNDrace[0]}}
+  <br> <strong>Background: </strong>{{DNDbackground}}</p>
+
 <table>
   
 
@@ -93,7 +100,7 @@
       document.getElementById('rawWIS').innerHTML 
           = roll();
       document.getElementById('rawCHA').innerHTML 
-          = roll();
+          = roll();   
       add_raw_race()
     document.getElementById("roll_button").style.display = "none";
     document.getElementById("standard_button").style.display = "none";}
@@ -137,6 +144,7 @@
 
 <script>
   function add_raw_race() {
+    
     document.getElementById('STR').innerHTML = Number(document.getElementById('rawSTR').innerHTML) + Number(document.getElementById('raceSTR').innerHTML) 
     document.getElementById('DEX').innerHTML = Number(document.getElementById('rawDEX').innerHTML) + Number(document.getElementById('raceDEX').innerHTML) 
     document.getElementById('CON').innerHTML = Number(document.getElementById('rawCON').innerHTML) + Number(document.getElementById('raceCON').innerHTML) 
@@ -191,5 +199,51 @@ function modifier()
 
 <br>
 <br>
-  <p>{{DNDrace}}, {{DNDclass}}, {{DNDbackground}}</p>
+
+<script>
+  function race_bonus(){
+    let AB = ['raceSTR', 'raceDEX', 'raceCON', 'raceINT', 'raceWIS', 'raceCHA']
+    let ABname = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']
+    
+    var Ability1 = document.getElementById('AB1').innerHTML
+    var Ability2 = document.getElementById('AB2').innerHTML
+    var AbilityScore1 = Number(document.getElementById('ABscore1').innerHTML)
+    var AbilityScore2 = Number(document.getElementById('ABscore2').innerHTML)
+
+    for(let i = 0; i<6; i++){
+      if(Ability1 == ABname[i]){
+        document.getElementById(AB[i]).innerHTML = AbilityScore1
+      }
+    if(Ability2 == ABname[i]){
+        document.getElementById(AB[i]).innerHTML = AbilityScore2
+      }
+  }
+  if (document.getElementById('raceName').innerHTML == "Human"){
+    for(i=0; i<6; i++)
+    {
+      document.getElementById(AB[i]).innerHTML = 1
+    }
+  }
+}
+window.onload = race_bonus;
+</script>
+<p id = "className" hidden>{{DNDclass}}</p>
+<p id = "backgroundName" hidden>{{DNDbackground}}</p>
+<p id = "raceName" hidden>{{DNDrace[0]}}</p>
+<p id = "AB1" hidden>{{DNDrace[1]}}</p>
+  <p id = "AB2" hidden>{{DNDrace[2]}}</p>
+  <p id = "ABscore1" hidden >{{DNDrace[3]}}</p>
+  <p id = "ABscore2" hidden >{{DNDrace[4]}}</p>
+
+
+<form action="/createCharacterStep3" method="post">
+
+  <input type="submit" value="Next Step"></button>
+  <input type="text" name="DNDclass" id="DNDclass" value = {{DNDclass}} hidden><br>
+  <input type="text" name="DNDrace" id="DNDrace" value = {{DNDrace[0]}} hidden><br>
+  <input type="text" name="DNDbackground" id="DNDbackground" value = {{DNDbackground}} hidden><br>
+
+  
+
+</form>
 {% endblock %}

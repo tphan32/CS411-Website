@@ -266,6 +266,10 @@ def step1():
         races = [
             {
             "name"    : "error",
+            "AB1"    : "error",
+            "AB2"    : "error",
+            "ABscore1"    : "error",
+            "ABscore2"    : "error",
             } 
         ]
         
@@ -274,7 +278,29 @@ def step1():
 @app.route("/createCharacterStep2", methods=["POST"])
 def step2():
     DNDclass = request.form.get("DNDclass")
-    DNDrace = request.form.get("DNDrace")
+    DNDraceString = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
 
+    DNDrace = []
+    part = ''
+    for i in DNDraceString:  
+        if i != ',':
+            part += i
+        else:
+            DNDrace.append(part)
+            part = ''
+    DNDrace.append(part)
+
+
     return render_template("createCharacterStep2.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground)
+
+@app.route("/createCharacterStep3", methods=["POST"])
+def step3():
+    DNDclass = request.form.get("DNDclass")
+    DNDrace = request.form.get("DNDrace")
+    DNDbackground = request.form.get("DNDbackground")
+    DNDBskills = db_helper.get_skills_name(DNDbackground)
+    DNDRskills = db_helper.get_skills_name(DNDrace)
+    DNDCskills = db_helper.get_skills_name(DNDclass)
+
+    return render_template("createCharacterStep3.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground, DNDBskills = DNDBskills, DNDRskills=DNDRskills, DNDCskills=DNDCskills)
