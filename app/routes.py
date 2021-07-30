@@ -233,3 +233,48 @@ def login():
         return render_template("home.html")
     else:
        return render_template("register.html")
+
+
+
+
+
+@app.route("/createCharacterStep1", methods=["POST"])
+def step1():
+    try:
+        classes = db_helper.get_class_name()
+        
+    except:
+        classes = [
+            {
+            "name"    : "error",
+            } 
+        ]
+    try:
+        backgrounds = db_helper.get_background_name()
+
+    except:
+        backgrounds = [
+            {
+            "name"    : "error",
+            } 
+        ]
+
+    try:
+        races = db_helper.get_race_name()
+
+    except:
+        races = [
+            {
+            "name"    : "error",
+            } 
+        ]
+        
+    return render_template("createCharacterStep1.html", classes = classes, backgrounds = backgrounds, races = races)
+
+@app.route("/createCharacterStep2", methods=["POST"])
+def step2():
+    DNDclass = request.form.get("DNDclass")
+    DNDrace = request.form.get("DNDrace")
+    DNDbackground = request.form.get("DNDbackground")
+
+    return render_template("createCharacterStep2.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground)

@@ -180,4 +180,43 @@ def user_login(input_user: str, input_password: str):
         return False
         
 
+
+def get_class_name():
+    conn = db.connect()
+    query_results = conn.execute('SELECT className FROM Class;').fetchall()
+    conn.close()
+    classes = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+        } 
+        classes.append(item)
+    return classes
+
+def get_race_name():
+    #conn = db.connect()
+    #query_results = conn.execute('SELECT Name FROM Race;').fetchall()
+    #conn.close()
+    query_results = ['Dragonborn','Dwarf','Elf','Gnome','Half-Elf', 'Half-Orc', 'Halfing', 'Human', 'Tiefling']
+    races = []
+    for result in query_results:
+        item = {
+            #when fixing make sure result[0]
+            "name"    : result,
+        } 
+        races.append(item)
+    return races
+
+
+def get_background_name():
+    conn = db.connect()
+    query_results = conn.execute('SELECT DISTINCT backgroundName FROM BackgroundInfo;').fetchall()
+    conn.close()
+    backgrounds = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+        } 
+        backgrounds.append(item)
+    return backgrounds
     

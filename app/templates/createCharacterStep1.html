@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 1:
+{% endblock %}
+{% block content %}
+    
+
+<form action="/createCharacterStep2" method="post">
+
+    <label for="Class">Choose a Class:</label>  
+    <select name="DNDclass" id="DNDclass">
+      {% for item in classes %}
+      <option value={{item.name}}>{{item.name}}</option>
+      {% endfor %}  
+    </select>
+
+    <br><br>
+
+    <label for="DNDrace">Choose a Race:</label>
+    <select name="DNDrace" id="DNDrace">
+      {% for item in races %}
+      <option value={{item.name}}>{{item.name}}</option>
+      {% endfor %}  
+    </select>
+
+    <br><br>
+
+    <label for="DNDbackground">Choose a Background:</label>
+    <select name="DNDbackground" id="DNDbackground">
+      {% for item in backgrounds %}
+      <option value={{item.name}}>{{item.name}}</option>
+      {% endfor %} 
+    </select>
+
+    <br><br>
+
+    <input type="submit" value="Submit">
+  </form>
+  
+  
+{% endblock %}

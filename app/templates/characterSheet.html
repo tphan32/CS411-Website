@@ -5,7 +5,13 @@
 {% block content %}
     {% if session["username"] %}
         You are logged in as {{ session["username"] }}. <a href="/logout">Log out</a>.
-        {% if lvl == None %}
+
+        <form action="/createCharacterStep1" method="post">
+
+            <input type="submit" value="Get Started">Get Started!</button>
+        
+        </form>
+<!--        {% if lvl == None %}
             <div>
                 <button type="button" onclick="showCreate()" style="visibility:visible" id="showCreate"> Create New Character Sheet </button>
             </div>
@@ -21,6 +27,7 @@
         function showCreate() {
             document.getElementById("createDiv").style.display = "";
             document.getElementById("showCreate").style.visibility = "hidden";
-        }
+        }-->
+
     </script>
 {% endblock %}

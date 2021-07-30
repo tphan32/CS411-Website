@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 2: Ability Scores and Health
+{% endblock %}
+{% block content %}
+<style>
+  td {
+    border: 1px solid black;
+  }
+  </style>
+
+<table>
+  
+
+  <tr>
+    <th>Change?</th>
+    <th>Ability</th>
+    <th>Raw Score</th>
+    <th>Race Bonus</th>
+    <th>Final Score</th>
+    <th>Modifier</th>
+  </tr>
+  
+
+  <tr>
+    <td><button onclick= "flip(0)" > ↓ down </button></td>
+    <td>Strength</td>
+    <td id = "rawSTR"></td>
+    <td id = "raceSTR"></td>
+    <td id = "STR">  </td>
+    <td id = "modSTR">  </td>
+  </tr>
+  <tr>
+    <td><button onclick= "flip(1)" > ↓ down</button></td>
+    <td>Dexterity</td>
+    <td id = "rawDEX"></td>
+    <td id = "raceDEX"></td>
+    <td id = "DEX">  </td>
+    <td id = "modDEX">  </td>
+  </tr>
+  <tr>
+    <td><button onclick= "flip(2)" > ↓ down</button></td>
+    <td>Constitution</td>
+    <td id = "rawCON"></td>
+    <td id = "raceCON"></td>
+    <td id = "CON">  </td>
+    <td id = "modCON">  </td>
+  </tr>
+  <tr>
+    <td><button onclick= "flip(3)" > ↓ down</button></td>
+    <td>Intelligence</td>
+    <td id = "rawINT"></td>
+    <td id = "raceINT"></td>
+    <td id = "INT">  </td>
+    <td id = "modINT">  </td>
+  </tr>
+  <tr>
+    <td><button onclick= "flip(4)" > ↓ down</button></td>
+    <td>Wisdom</td>
+    <td id = "rawWIS"></td>
+    <td id = "raceWIS"></td>
+    <td id = "WIS">  </td>
+    <td id = "modWIS">  </td>
+  </tr>
+  <tr>
+    <td><button onclick= "flip(5)" > ↑ up</button></td>
+    <td>Charisma</td>
+    <td id = "rawCHA"></td>
+    <td id = "raceCHA"></td>
+    <td id = "CHA"> </td>
+    <td id = "modCHA">  </td>
+  </tr>
+</table>
+  
+<button id = "roll_button" onclick="get_scores()">
+  Roll for Stats
+</button>
+
+<button id = "standard_button" onclick="standard_scores()">
+  Take the Standard
+</button>
+
+<script>
+  function get_scores() {
+      document.getElementById('rawSTR').innerHTML 
+          = roll();
+      document.getElementById('rawDEX').innerHTML 
+          = roll();
+      document.getElementById('rawCON').innerHTML 
+          = roll();
+      document.getElementById('rawINT').innerHTML 
+          = roll();
+      document.getElementById('rawWIS').innerHTML 
+          = roll();
+      document.getElementById('rawCHA').innerHTML 
+          = roll();
+      add_raw_race()
+    document.getElementById("roll_button").style.display = "none";
+    document.getElementById("standard_button").style.display = "none";}
+</script>
+
+<script>
+  function standard_scores() {
+      document.getElementById('rawSTR').innerHTML 
+          = 15;
+      document.getElementById('rawDEX').innerHTML 
+          = 14;
+      document.getElementById('rawCON').innerHTML 
+          = 13;
+      document.getElementById('rawINT').innerHTML 
+          = 12;
+      document.getElementById('rawWIS').innerHTML 
+          = 10;
+      document.getElementById('rawCHA').innerHTML 
+          = 8;
+      add_raw_race()
+    document.getElementById("roll_button").style.display = "none";
+    document.getElementById("standard_button").style.display = "none";}
+</script>
+
+<script>
+  function roll() {
+    var AB = 0;
+    let AB_rolls = [0,0,0,0]
+
+    for (let i = 0; i < 4; i++) {
+      AB_rolls[i] +=  Math.floor((Math.random() * 6) + 1);}
+    
+    AB_rolls.sort()
+
+    for (let i = 0; i < 3; i++) {
+      AB +=  AB_rolls[i+1]}
+    return AB;
+    
+  }
+</script>
+
+<script>
+  function add_raw_race() {
+    document.getElementById('STR').innerHTML = Number(document.getElementById('rawSTR').innerHTML) + Number(document.getElementById('raceSTR').innerHTML) 
+    document.getElementById('DEX').innerHTML = Number(document.getElementById('rawDEX').innerHTML) + Number(document.getElementById('raceDEX').innerHTML) 
+    document.getElementById('CON').innerHTML = Number(document.getElementById('rawCON').innerHTML) + Number(document.getElementById('raceCON').innerHTML) 
+    document.getElementById('INT').innerHTML = Number(document.getElementById('rawINT').innerHTML) + Number(document.getElementById('raceINT').innerHTML) 
+    document.getElementById('WIS').innerHTML = Number(document.getElementById('rawWIS').innerHTML) + Number(document.getElementById('raceWIS').innerHTML)
+    document.getElementById('CHA').innerHTML = Number(document.getElementById('rawCHA').innerHTML) + Number(document.getElementById('raceCHA').innerHTML) 
+    modifier()
+    }
+</script>
+
+<script>
+  function flip(AB) {
+    ABS = ["rawSTR", "rawDEX", "rawCON", "rawINT", "rawWIS", "rawCHA"]
+    
+    if (AB <5){ var change = AB+1}
+    else {var change = AB-1}
+
+    var ab1 = Number(document.getElementById(ABS[AB]).innerHTML)
+    document.getElementById(ABS[AB]).innerHTML = Number(document.getElementById(ABS[change]).innerHTML)
+    document.getElementById(ABS[change]).innerHTML = ab1
+    add_raw_race()    
+    
+    }
+</script>
+
+<script>
+function modifier()
+{
+ let pair = ['modSTR', 'STR', 'modDEX', 'DEX', 'modCON', 'CON', 'modINT', 'INT', 'modWIS', 'WIS', 'modCHA', 'CHA']
+
+ for (let i = 0; i < 6; i++) {
+  var mod = Math.floor((Number(document.getElementById(pair[2*i+1]).innerHTML)-10)/2)
+  if (mod > 0){
+    document.getElementById(pair[2*i]).innerHTML = "+" + mod
+    }
+  else{
+    document.getElementById(pair[2*i]).innerHTML = mod
+  }
+ }
+
+
+}
+
+</script>
+<br>
+<br>
+<strong> You only get <u>ONE CHANCE</u> to get your ability scores and you have two options! </strong>
+<br>
+<em> 1 - Roll for your scores - This is a more risky choice that could give you better or worse scores than average</em>
+<br>
+<em> 2 - Take the standard scores - This is a more stable choice that gives you scores that are premade and will not be as risky</em>
+
+<br>
+<br>
+  <p>{{DNDrace}}, {{DNDclass}}, {{DNDbackground}}</p>
+{% endblock %}
