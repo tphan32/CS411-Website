@@ -226,21 +226,23 @@ def get_background_name():
     
 def get_skills_name(from_where):
     conn = db.connect()
-    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\';').fetchall()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'skill\');').fetchall()
     conn.close()
     all = []
     for result in query_results:
         item = {
             "name"    : result[0],
-        } 
+        }
         all.append(item)
-    if from_where not in ['Bard','Ranger', 'Rogue']:
-        all.append(2)
-    elif from_where == 'Rogue':
-        all.append(4)
+
+       
+    if from_where in ['Barbarian','Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Sorcerer', 'Warlock', 'Wizard']:
+        return all, 2
     elif from_where == 'Ranger' or from_where == 'Bard':
-        all.append(4)
+        return all, 3
+    elif from_where == 'Rogue':
+        return all, 4
 
-
+    
 
     return all

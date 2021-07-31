@@ -8,24 +8,40 @@
 <p>You gain skills from your choices:
   <br>
   <br>
-  <strong>Class: </strong>{{DNDclass}}
+  <strong>Class: </strong>{{DNDclass}} - choose {{numCskills}} skills
   <br>
-  {{DNDCskills}}
-  <br>
+  
 
+
+
+  {% for part in range(numCskills) %}
+  <select name=Prof{{part}} id=Prof{{part}}>
+      {% for item in DNDCskills %}
+    
+      
+      <option value={{item.name}}>{{item.name}}</option>
+      {% endfor %}
+    </select>  
+      {% endfor %} 
+    </select>
+    
 
   <br>
   <br>
   <strong>Race: </strong>{{DNDrace}}
   <br>
   <!-- We are just going to take the first two skills if they have that many, choosing for this one is a bit wonky because not everyone chooses -->
-  <small>-&ensp;{{DNDRskills[0].name}}
-    <br>
-    -&ensp;{{DNDRskills[1].name}}
-    </small>
-    </p>
-
   
+    
+    {% for item in DNDRskills %}
+    <small>
+    -&ensp;{{item.name}}
+    </small><br>
+    {% endfor %}
+    <br>
+
+
+   
   <strong>Background: </strong>{{DNDbackground}}
 <br>
 
@@ -37,6 +53,11 @@
 
 
 
-  
+<p id = "className" hidden>{{DNDclass}}</p>
+<p id = "backgroundName" hidden>{{DNDbackground}}</p>
+<p id = "raceName" hidden>{{DNDrace}}</p>
+<p id = "Pro1" hidden>{{Prof1}}</p>
+<p id = "Pro2" hidden>{{Prof2}}</p>
+<p id = "Pro3" hidden>{{Prof3}}</p>
   
 {% endblock %}

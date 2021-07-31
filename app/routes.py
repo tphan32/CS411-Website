@@ -301,6 +301,7 @@ def step3():
     DNDbackground = request.form.get("DNDbackground")
     DNDBskills = db_helper.get_skills_name(DNDbackground)
     DNDRskills = db_helper.get_skills_name(DNDrace)
-    DNDCskills = db_helper.get_skills_name(DNDclass)
+    DNDCskills, numCskills = db_helper.get_skills_name(DNDclass)
 
-    return render_template("createCharacterStep3.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground, DNDBskills = DNDBskills, DNDRskills=DNDRskills, DNDCskills=DNDCskills)
+    return render_template("createCharacterStep3.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
+         DNDBskills = DNDBskills, DNDRskills=DNDRskills, DNDCskills=DNDCskills, numCskills=numCskills)
