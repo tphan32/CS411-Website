@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html>
+
     <head>
         <meta charset="utf-8" name="viewport" content="initial-scale=1, width=device-width"/>
         <title>{% block title %}{% endblock %}</title>
@@ -9,8 +11,7 @@
     </head>
 
     <body>
-
-    <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #E84A27;">
+        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #E84A27;">
             <div class="container-fluid ">
                 <a class="navbar-brand" href="/">Home</a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -32,20 +33,17 @@
                     <li class="nav-item">
                         <a href="{{ url_for('profile') }}" class="navbar-item">Profile</a>            
                     </li>
-
                 </ul>
-
             </div>
-    </nav>
-
-
+        </nav>
         <div class="body-content">
+
             {% block content %}
             {% endblock %}
-            <hr/>
-            <footer>
+            <footer class="footer">
                 <p>© 2021</p>
             </footer>
         </div>
     </body>
+
 </html>
