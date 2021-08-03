@@ -103,6 +103,29 @@ def about():
 def contact():
     return render_template("contact.html")
 
+@app.route("/profile/")
+def profile():
+    try:
+        state = db_helper.get_account_protection(session.get("username"))
+    except:
+        state = False
+    return render_template("profile.html", state=state)
+
+@app.route("/accountProtection")
+def accountProtection():
+    state = request.args.get("q")
+    db_helper.update_account_protection(session.get("username"), state)
+    return "OK"
+
+@app.route("/removeAccount")
+def removeAccount():
+    status = db_helper.remove_account(session.get("username"))
+    if status == "success":
+        session.clear()
+        return redirect("/logout")
+    else:
+        return redirect("/profile")
+
 @app.route("/query1")
 def query1():
     try:
