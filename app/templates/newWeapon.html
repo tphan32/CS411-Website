@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}
+    New Weapon
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Damage</th>
+                <th scope="col">Damage Type</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Properties</th>
+                <th scope="col">Category</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td>{{item.name}}</td>
+                    <td>{{item.cost}}</td>
+                    <td>{{item.damage}}</td>
+                    <td>{{item.damageType}}</td>
+                    <td>{{item.weight}}</td>
+                    <td>{{item.properties}}</td>
+                    <td>{{item.category}}</td>
+                </tr>
+            {% endfor %}    
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

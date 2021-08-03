@@ -25,6 +25,24 @@ def remove_account(username):
         conn.close()
         return "fail"
     
+def call_pro_rand_weapon():
+    conn = db.connect()
+    query = "CALL randomNewWeapon();"
+    query_results = conn.execute(query).fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "cost"   : result[1],
+            "damage"  : result[2],
+            "damageType": result[3],
+            "weight": result[4],
+            "properties": result[5],
+            "category": result[6]
+        } 
+        items.append(item)
+    return items    
 
 def get_weaponName():
     conn = db.connect()
@@ -205,8 +223,6 @@ def user_login(input_user: str, input_password: str):
     else:
         return False
         
-
-
 def get_class_name():
     conn = db.connect()
     query_results = conn.execute('SELECT className FROM Class;').fetchall()

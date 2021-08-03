@@ -95,6 +95,11 @@ def removeWeapon():
         db_helper.remove_weaponName(target)
     return redirect("/weapon/") 
 
+@app.route("/randomNewWeapon")
+def randNewWeapon():
+    weapons = db_helper.call_pro_rand_weapon()
+    return render_template("newWeapon.html", items = weapons)
+
 @app.route("/about/")
 def about():
     return render_template("about.html")
