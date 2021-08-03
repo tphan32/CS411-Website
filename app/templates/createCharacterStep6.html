@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 6:
+{% endblock %}
+{% block content %}
+
+<strong>PICK YOUR SPELLS!</strong> <br> <small>If you have any...</small>
+<br>
+<br>
+
+<form action="/createCharacterStep7" method="post">
+Cantrip Spells for {{DNDclass}}
+<br>
+{%for part in range(DND_num_0spells) %}
+<select name=spell id=spell>
+    {% for item in DND_0spell_options %}
+    <option value={{item.name}}>{{item.name}}</option>
+    {% endfor %}
+  </select>  
+    {% endfor %} 
+  </select>
+<br>
+<br>
+Level 1 Spells for {{DNDclass}}
+<br>
+  {%for part in range(DND_num_1spells) %}
+<select name=spell id=spell>
+    {% for item in DND_1spell_options %}
+    <option value={{item.name}}>{{item.name}}</option>
+    {% endfor %}
+  </select>  
+    {% endfor %} 
+  </select>
+
+  
+  <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
+  <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+  <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
+<input type="submit" value="Next Step"></button>
+</form>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 5:
+{% endblock %}
+{% block content %}
+
+<strong>Pick your class equipment!</strong>
+
+<br><br>
+
+<table>
+  <tr>
+  {%for part in DND_equipment_options%}
+  <th >Options  </th>
+  {% endfor %}
+  </tr>
+
+  <tr>
+{%for part in DND_equipment_options%}
+<td>
+  <select name={{part}} id={{part}}>
+
+  {%for piece in part%}
+    <option value={{piece}}>{{piece}}</option>
+
+  {%endfor%}
+</select>
+</td>
+{%endfor%}
+</select>
+</tr>
+
+</table>
+
+<form action="/createCharacterStep6" method="post">
+
+  <input type="submit" value="Next Step"></button>
+  <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
+  <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+  <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
+
+</form>
+
+
+
+{% endblock %}

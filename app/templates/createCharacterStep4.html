@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 4:
+{% endblock %}
+{% block content %}
+    
+
+{{DNDbackground}} Languages:
+<br>
+
+
+{% for part in range(numBlangs) %}
+<select name=Prof{{part}} id=Prof{{part}}>
+    {% for item in DNDBlangs %}
+    <option value={{item.name}}>{{item.name}}</option>
+    {% endfor %}
+  </select>  
+    {% endfor %} 
+  </select>
+
+  <br>
+  {{DNDrace}} Languages:
+<br>
+  {% for part in range(numRlangs) %}
+<select name=Prof{{part}} id=Prof{{part}}>
+    {% for item in DNDRlangs %}
+    <option value={{item.name}}>{{item.name}}</option>
+    {% endfor %}
+  </select>  
+    {% endfor %} 
+  </select>
+
+
+
+  <form action="/createCharacterStep5" method="post">
+
+    <input type="submit" value="Next Step"></button>
+    <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
+    <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+    <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
+    
+    </form>
+{% endblock %}

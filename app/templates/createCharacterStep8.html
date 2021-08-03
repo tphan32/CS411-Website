@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 8:
+{% endblock %}
+{% block content %}
+
+
+<label for="Trait">Choose a Personality Trait:</label>  
+<select name="Trait" id="Trait">
+  {% for item in bPTrait %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}  
+</select>
+<br>
+<label for="Ideal">Choose a Ideal:</label>  
+<select name="Ideal" id="Ideal">
+  {% for item in bIdeal %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}  
+</select>
+<br>
+<label for="Bond">Choose a Bond:</label>  
+<select name="Bond" id="Bond">
+  {% for item in bBond %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}  
+</select>
+<br>
+<label for="Flaw">Choose a Flaw:</label>  
+<select name="Flaw" id="Flaw">
+  {% for item in bFlaw %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}  
+</select>
+<br>
+
+
+
+{% endblock %}

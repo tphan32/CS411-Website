@@ -32,15 +32,17 @@
   <br>
   <!-- We are just going to take the first two skills if they have that many, choosing for this one is a bit wonky because not everyone chooses -->
   
-    
-    {% for item in DNDRskills %}
-    <small>
-    -&ensp;{{item.name}}
-    </small><br>
-    {% endfor %}
-    <br>
+  
 
-
+  {%if DNDRskills %}
+  {% for item in DNDRskills %}
+  <small>
+  -&ensp;{{item.name}}
+  </small><br>
+  {% endfor %}
+  
+  {% endif %}
+ <br>
    
   <strong>Background: </strong>{{DNDbackground}}
 <br>
@@ -51,13 +53,12 @@
 </small>
 </p>
 
+<form action="/createCharacterStep4" method="post">
 
+<input type="submit" value="Next Step"></button>
+<input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
+<input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+<input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
 
-<p id = "className" hidden>{{DNDclass}}</p>
-<p id = "backgroundName" hidden>{{DNDbackground}}</p>
-<p id = "raceName" hidden>{{DNDrace}}</p>
-<p id = "Pro1" hidden>{{Prof1}}</p>
-<p id = "Pro2" hidden>{{Prof2}}</p>
-<p id = "Pro3" hidden>{{Prof3}}</p>
-  
+</form>
 {% endblock %}

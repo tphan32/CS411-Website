@@ -183,7 +183,7 @@ def user_login(input_user: str, input_password: str):
 
 def get_class_name():
     conn = db.connect()
-    query_results = conn.execute('SELECT className FROM Class;').fetchall()
+    query_results = conn.execute('SELECT className FROM Class WHERE className IN(SELECT className from ClassEquipment);').fetchall()
     conn.close()
     classes = []
     for result in query_results:
@@ -246,3 +246,84 @@ def get_skills_name(from_where):
     
 
     return all
+
+
+def get_langs_name(from_where):
+    conn = db.connect()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'language\');').fetchall()
+    conn.close()
+    all = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+        }
+        all.append(item)
+
+       
+
+    if from_where  == 'Half-Elf':
+        return all, 3
+    elif from_where in ['Guild Artisan', 'Guild Merchant', 'Hermit', 'Noble', 'Outlander']:
+        return all, 1
+    elif from_where in ['Charlatan', 'Criminal', 'Spy', 'Entertainer', 'Gladiator','Folk Hero','Sailor','Pirate', 'Soldier','Urchin']:
+        return all, 0
+
+    
+
+    return all, 2 
+
+
+def get_equip_options(DNDclass):
+    conn = db.connect()
+    num_choice_list = conn.execute('SELECT DISTINCT choiceNumber FROM ClassEquipment WHERE className = \''+DNDclass+'\' ;').fetchall() 
+    options = []
+    for choice in num_choice_list:
+        num_choice = str(choice[0])
+        part = conn.execute('SELECT weaponName1, weaponName2, armorName1, armorName2, itemName1, itemName2 FROM ClassEquipment WHERE className = \''+DNDclass+'\' AND choiceNumber = '+num_choice+';').fetchall()
+        new_part=[]
+        for piece in part:
+            little_part = []
+            for equip in piece:    
+                if equip != None:
+                    little_part.append(equip)
+                    new_part.append(little_part)    
+
+        options.append(new_part)
+    conn.close()
+    return options
+
+def get_spell_options(DNDclass, level):
+    if level == 0:
+        level_name ='0'
+    elif level == 1:
+        level_name ='1'
+
+    conn = db.connect()
+    num_choice_list = conn.execute('SELECT * FROM Spells WHERE classes = \''+DNDclass+'\'  AND level = \''+level_name+'\';').fetchall() 
+    if level == 0:
+
+        num_to_learn = conn.execute('SELECT cantrips FROM Magic WHERE className = \''+DNDclass+'\' AND level = 1 ').fetchall()
+    elif level == 1:
+        if DNDclass == "Fighter":
+            num_to_learn = [[0]]
+        else:
+            num_to_learn = [[4]]
+    conn.close()
+
+    num_to_learn = num_to_learn[0][0]
+
+    if num_to_learn == None:
+        num_to_learn = 0
+    return num_choice_list, num_to_learn
+
+
+def get_background_info(background, info):
+    conn = db.connect()
+
+    information = conn.execute('SELECT * FROM BackgroundInfo WHERE backgroundName = \''+background+'\'  AND type = \''+info+'\';').fetchall() 
+    clean_info =[]
+    for part in information:
+        clean_info.append(part[3])
+
+    
+    return clean_info

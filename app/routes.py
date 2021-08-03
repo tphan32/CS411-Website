@@ -299,9 +299,76 @@ def step3():
     DNDclass = request.form.get("DNDclass")
     DNDrace = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
+
+
     DNDBskills = db_helper.get_skills_name(DNDbackground)
     DNDRskills = db_helper.get_skills_name(DNDrace)
     DNDCskills, numCskills = db_helper.get_skills_name(DNDclass)
 
     return render_template("createCharacterStep3.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
          DNDBskills = DNDBskills, DNDRskills=DNDRskills, DNDCskills=DNDCskills, numCskills=numCskills)
+
+
+@app.route("/createCharacterStep4", methods=["POST"])
+def step4():
+    DNDclass = request.form.get("className")
+    DNDrace = request.form.get("raceName")
+    DNDbackground = request.form.get("backgroundName")
+    DNDBlangs, numBlangs = db_helper.get_langs_name(DNDbackground)
+    DNDRlangs,numRlangs = db_helper.get_langs_name(DNDrace)
+
+
+    return render_template("createCharacterStep4.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
+         DNDBlangs = DNDBlangs, DNDRlangs=DNDRlangs, numBlangs=numBlangs, numRlangs=numRlangs)
+
+
+@app.route("/createCharacterStep5", methods=["POST"])
+def step5():
+    DNDclass = request.form.get("className")
+    DNDrace = request.form.get("raceName")
+    DNDbackground = request.form.get("backgroundName")
+
+    DND_equipment_options = db_helper.get_equip_options(DNDclass)
+
+    return render_template("createCharacterStep5.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
+        DND_equipment_options=DND_equipment_options)
+
+@app.route("/createCharacterStep6", methods=["POST"])
+def step6():
+    DNDclass = request.form.get("className")
+    DNDrace = request.form.get("raceName")
+    DNDbackground = request.form.get("backgroundName")
+
+    DND_0spell_options, DND_num_0spells = db_helper.get_spell_options(DNDclass, 0)
+    DND_1spell_options, DND_num_1spells = db_helper.get_spell_options(DNDclass, 1)
+
+    return render_template("createCharacterStep6.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
+        DND_0spell_options=DND_0spell_options, DND_num_0spells = DND_num_0spells, DND_1spell_options = DND_1spell_options,\
+             DND_num_1spells=DND_num_1spells)
+
+
+@app.route("/createCharacterStep7", methods=["POST"])
+def step7():
+    DNDclass = request.form.get("className")
+    DNDrace = request.form.get("raceName")
+    DNDbackground = request.form.get("backgroundName")
+
+
+    return render_template("createCharacterStep7.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground)
+
+
+@app.route("/createCharacterStep8", methods=["POST"])
+def step8():
+    DNDclass = request.form.get("className")
+    DNDrace = request.form.get("raceName")
+    DNDbackground = request.form.get("backgroundName")
+
+    bPTrait = db_helper.get_background_info(DNDbackground, "Personality Trait")
+    bIdeal = db_helper.get_background_info(DNDbackground, "Ideal")
+    bBond = db_helper.get_background_info(DNDbackground, "Bond")
+    bFlaw = db_helper.get_background_info(DNDbackground, "Flaw")
+
+
+
+    return render_template("createCharacterStep8.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
+        bPTrait=bPTrait, bIdeal=bIdeal, bBond=bBond, bFlaw=bFlaw )

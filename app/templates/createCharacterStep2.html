@@ -102,6 +102,7 @@
       document.getElementById('rawCHA').innerHTML 
           = roll();   
       add_raw_race()
+
     document.getElementById("roll_button").style.display = "none";
     document.getElementById("standard_button").style.display = "none";}
 </script>
@@ -121,6 +122,7 @@
       document.getElementById('rawCHA').innerHTML 
           = 8;
       add_raw_race()
+
     document.getElementById("roll_button").style.display = "none";
     document.getElementById("standard_button").style.display = "none";}
 </script>
@@ -151,6 +153,7 @@
     document.getElementById('INT').innerHTML = Number(document.getElementById('rawINT').innerHTML) + Number(document.getElementById('raceINT').innerHTML) 
     document.getElementById('WIS').innerHTML = Number(document.getElementById('rawWIS').innerHTML) + Number(document.getElementById('raceWIS').innerHTML)
     document.getElementById('CHA').innerHTML = Number(document.getElementById('rawCHA').innerHTML) + Number(document.getElementById('raceCHA').innerHTML) 
+
     modifier()
     }
 </script>
@@ -165,7 +168,8 @@
     var ab1 = Number(document.getElementById(ABS[AB]).innerHTML)
     document.getElementById(ABS[AB]).innerHTML = Number(document.getElementById(ABS[change]).innerHTML)
     document.getElementById(ABS[change]).innerHTML = ab1
-    add_raw_race()    
+    add_raw_race()
+    ABscore_submit()    
     
     }
 </script>
@@ -241,9 +245,7 @@ window.onload = race_bonus;
   <input type="submit" value="Next Step"></button>
   <input type="text" name="DNDclass" id="DNDclass" value = {{DNDclass}} hidden><br>
   <input type="text" name="DNDrace" id="DNDrace" value = {{DNDrace[0]}} hidden><br>
-  <input type="text" name="DNDbackground" id="DNDbackground" value = {{DNDbackground}} hidden><br>
-
-  
+  <input type="text" name="DNDbackground" id="DNDbackground" value = {{DNDbackground}} hidden><br>  
 
 </form>
 {% endblock %}
