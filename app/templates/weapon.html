@@ -5,32 +5,42 @@
 {% block content %}
     <div class="container">
     <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Cost</th>
-            <th>Damage</th>
-            <th>Damage Type</th>
-            <th>Weight</th>
-            <th>Properties</th>
-            <th>Category</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in items %}
+        <table class="table">
+            <thead>
             <tr>
-                <td>{{item.name}}</td>
-                <td>{{item.cost}}</td>
-                <td>{{item.damage}}</td>
-                <td>{{item.damageType}}</td>
-                <td>{{item.weight}}</td>
-                <td>{{item.properties}}</td>
-                <td>{{item.category}}</td>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Damage</th>
+                <th scope="col">Damage Type</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Properties</th>
+                <th scope="col">Category</th>
             </tr>
-        {% endfor %}    
-        </tbody>
+            </thead>
+            <tbody>
+            {% for item in items %}
 
-    </table>
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td>{{item.name}}</td>
+                    <td>{{item.cost}}</td>
+                    <td>{{item.damage}}</td>
+                    <td>{{item.damageType}}</td>
+                    <td>{{item.weight}}</td>
+                    <td>{{item.properties}}</td>
+                    <td>{{item.category}}</td>
+                </tr>
+            {% endfor %}    
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h3> Random A New Weapon </h3>
+        <form action="/randomNewWeapon">
+            <input type="submit" value="Random">
+        </form>
     </div>
 
     <div>

@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}
+    Profile
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h3 class="mt-4"> Profile </h3>
+        <div class ="row">
+            <div class="col-md-12">
+                <div class="card shadow mt-2 rounded border-secondary mb-3 ">
+                  <div class="card-header text-white" style="background-color: #13294b ;">
+                        <div class="row">
+                            <div class="col-md-4">Username</div>
+                            <div class="col-md-4"> 
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Account Protection</label>   
+                            </div>
+                        </div>
+                  </div>
+                    <div class="card-body text-black">
+                        <div class="row">
+                            <div class="col-md-4">{{session["username"]}}</div>
+                            <div class="col-md-4">
+                                <div class="form-check form-switch">
+                                    {% if state == true %}
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" value="true" onclick="changeState(input.value)" checked>
+                                    {% else %}
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" value="false" onclick="changeState(input.value)">
+                                    {% endif %}
+                                </div>                            
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/removeAccount" type="button" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeState(state){
+            if (state == "true"){
+                document.getElementById('flexSwitchCheckDefault').value = "false";
+            }
+            else{
+                document.getElementById('flexSwitchCheckDefault').value = "true";
+            }
+        }
+        let input = document.querySelector('input');
+        input.addEventListener('click', function() {
+            
+            $.get('/accountProtection?q=' + input.value);
+        });
+    </script>
+
+{% endblock %}
+

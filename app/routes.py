@@ -95,6 +95,11 @@ def removeWeapon():
         db_helper.remove_weaponName(target)
     return redirect("/weapon/") 
 
+@app.route("/randomNewWeapon")
+def randNewWeapon():
+    weapons = db_helper.call_pro_rand_weapon()
+    return render_template("newWeapon.html", items = weapons)
+
 @app.route("/about/")
 def about():
     return render_template("about.html")
@@ -102,6 +107,29 @@ def about():
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
+
+@app.route("/profile/")
+def profile():
+    try:
+        state = db_helper.get_account_protection(session.get("username"))
+    except:
+        state = False
+    return render_template("profile.html", state=state)
+
+@app.route("/accountProtection")
+def accountProtection():
+    state = request.args.get("q")
+    db_helper.update_account_protection(session.get("username"), state)
+    return "OK"
+
+@app.route("/removeAccount")
+def removeAccount():
+    status = db_helper.remove_account(session.get("username"))
+    if status == "success":
+        session.clear()
+        return redirect("/logout")
+    else:
+        return redirect("/profile")
 
 @app.route("/query1")
 def query1():

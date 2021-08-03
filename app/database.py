@@ -1,5 +1,49 @@
 from typing import List
 from app import db
+
+def get_account_protection(username):
+    conn = db.connect()
+    query = "SELECT protectionOn FROM AccountProtection WHERE user_name = '{}'".format(username)
+    ret = conn.execute(query).fetchall()
+    conn.close()
+    return ret[0][0]
+
+def update_account_protection(username, state):
+    conn = db.connect()
+    query = "UPDATE AccountProtection SET protectionOn = {} WHERE user_name = '{}';".format(state, username)
+    conn.execute(query)
+    conn.close()
+
+def remove_account(username):
+    conn = db.connect()
+    query = "DELETE FROM User WHERE user_name = '{}';".format(username)
+    try:
+        conn.execute(query)
+        conn.close()
+        return "success"
+    except:
+        conn.close()
+        return "fail"
+    
+def call_pro_rand_weapon():
+    conn = db.connect()
+    query = "CALL randomNewWeapon();"
+    query_results = conn.execute(query).fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "cost"   : result[1],
+            "damage"  : result[2],
+            "damageType": result[3],
+            "weight": result[4],
+            "properties": result[5],
+            "category": result[6]
+        } 
+        items.append(item)
+    return items    
+
 def get_weaponName():
     conn = db.connect()
     query_results = conn.execute('SELECT * FROM Weapon;').fetchall()
@@ -179,8 +223,6 @@ def user_login(input_user: str, input_password: str):
     else:
         return False
         
-
-
 def get_class_name():
     conn = db.connect()
     query_results = conn.execute('SELECT className FROM Class WHERE className IN(SELECT className from ClassEquipment);').fetchall()
