@@ -156,7 +156,7 @@ def randNewWeapon():
 @app.route("/randomNewSpell")
 def randNewSpell():
     weapons = db_helper.call_pro_rand_spell()
-    return render_template("newWeapon.html", items = weapons)
+    return render_template("newSpell.html", items = weapons)
 
 @app.route("/classes/")
 def classes():

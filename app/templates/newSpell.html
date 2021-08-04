@@ -24,6 +24,10 @@
         });
     </script>
 
+    <div style="text-align:center;">
+        <h4> Spells with Random Element</h4>
+    </div>
+
     <div class="container">
     <table id = "Spells" class="table" border = "1" cellpadding = "1" cellspacing = "1">
         <thead>
@@ -62,52 +66,5 @@
 
     </table>
     </div>
-
-    <div>
-        <h6> Random A New Spell </h6>
-        <form action="/randomNewSpell">
-            <input type="submit" value="Random">
-        </form>
-    </div>
-
-    <p></p>
-    <details>
-            <summary>   Delete</summary>
-        <p></p>
-            <form action="/removeSpell" method="post">
-            <input autocomplete="off" autofocus="off" placeholder="spell name" name="spellName" type="text"><br>
-            <button type="submit">Submit</button>
-            </form>
-    </details>
-
-    <p></p>
-    <details>
-            <summary>   Update values </summary>
-        <p></p>
-            <form action="/updSpell" method="post">
-            <input type="text" id="oldSpellname" name="oldSpellname" placeholder="old spell name"><br>
-            <input type="text" id="newSpellname" name="newSpellname" placeholder="new spell name"><br>
-            <button type="submit">Submit</button>
-            </form>
-    </details>
-
-    <p></p>
-    <details>
-            <summary>   Add values </summary>
-        <p></p>
-            <form action="/addSpell" method="post">
-            <input type="text" id="name" name="name" placeholder="name"><br>
-            <input type="text" id="level" name="level" placeholder="level"><br>
-            <input type="text" id="school" name="school" placeholder="school"><br>
-            <input type="text" id="classes" name="classes" placeholder="classes"><br>
-            <input type="text" id="Casting_Time" name="Casting_Time" placeholder="casting time"><br>
-            <input type="text" id="spellRange" name="spellRange" placeholder="spell range"><br>
-            <input type="text" id="Components" name="Components" placeholder="components"><br>
-            <input type="text" id="Duration" name="Duration" placeholder="duration"><br>
-            <input type="text" id="description" name="description" placeholder="description"><br>
-            <button type="submit">Submit</button>
-            </form>
-    </details>
-    <p></p>
 
 {% endblock %}
