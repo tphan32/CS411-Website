@@ -1,5 +1,6 @@
 from typing import List
 from app import db
+import pdfrw
 
 def get_account_protection(username):
     conn = db.connect()
@@ -501,7 +502,7 @@ def update_character_bInfo(values, user_name):
             else:
                 thing += piece
         values[values.index(part)] = thing                
-        
+
     conn.execute('UPDATE User_Character SET PersonalityTraits = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Ideals  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Bonds  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
@@ -632,3 +633,62 @@ def update_character_MISC(user_name):
     conn.execute('UPDATE User_Character SET HPMax = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET HPCurrent = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')
 
+
+def fillPDF(username):
+    pdf_template = "CHAR.pdf"
+    pdf_output = "output.pdf"
+    path = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\CHAR.pdf"
+
+    template_pdf = pdfrw.PdfReader(path)
+
+    ANNOT_KEY = '/Annots'
+    ANNOT_FIELD_KEY = '/T'
+    ANNOT_VAL_KEY = '/V'
+    ANNOT_RECT_KEY = '/Rect'
+    SUBTYPE_KEY = '/Subtype'
+    WIDGET_SUBTYPE_KEY = '/Widget'
+
+    #Test code to print out all the keys:
+    # for page in template_pdf.pages:
+    #     annotations = page[ANNOT_KEY]
+    #     for annotation in annotations:
+    #         if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
+    #             if annotation[ANNOT_FIELD_KEY]:
+    #                 key = annotation[ANNOT_FIELD_KEY][1:-1]
+    #                 print(key)
+
+    conn = db.connect()
+    data_dict = {
+        'PlayerName': 'Max',
+        'CharacterName': 'Dumbledore',
+        'ClassLevel': 'Wizard' + ' Level 1',
+        'Background': 'Criminal',
+        'Race': 'Human',
+        'Alignment': 'Chaotic Good',
+        'Check Box 11': True,
+        'Check Box 18': True
+    }
+
+    conn.close()
+
+    def fill_pdf(input_pdf_path, output_pdf_path, data_dict):
+        template_pdf = pdfrw.PdfReader(input_pdf_path)
+        for page in template_pdf.pages:
+            annotations = page[ANNOT_KEY]
+            for annotation in annotations:
+                if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
+                    if annotation[ANNOT_FIELD_KEY]:
+                        key = annotation[ANNOT_FIELD_KEY][1:-1]
+                        if key in data_dict.keys():
+                            if type(data_dict[key]) == bool:
+                                if data_dict[key] == True:
+                                    annotation.update(pdfrw.PdfDict(
+                                        AS=pdfrw.PdfName('Yes')))
+                            else:
+                                annotation.update(
+                                    pdfrw.PdfDict(V='{}'.format(data_dict[key]))
+                                )
+                                annotation.update(pdfrw.PdfDict(AP=''))
+        pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
+
+    fill_pdf(path, pdf_output, data_dict)

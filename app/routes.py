@@ -577,4 +577,5 @@ def stepPDF():
     db_helper.update_character_ST(session["username"])
     db_helper.update_character_prof_mod(session["username"])
     db_helper.update_character_MISC(session["username"])
+    db_helper.fillPDF(session["username"])
     return render_template("createCharacterStepPDF.html")
