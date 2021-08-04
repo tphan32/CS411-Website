@@ -11,7 +11,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #E84A27;">
+        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: rgb(165, 137, 61);">
             <div class="container-fluid ">
                 <a class="navbar-brand" href="/">Home</a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -22,27 +22,14 @@
                         <a href="{{ url_for('spells') }}" class="navbar-item">Spells</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('query1') }}" class="navbar-item">Query1</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('query2') }}" class="navbar-item">Query2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('search') }}" class="navbar-item">Search</a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ url_for('profile') }}" class="navbar-item">Profile</a>            
                     </li>
                 </ul>
             </div>
         </nav>
         <div class="body-content">
-
             {% block content %}
             {% endblock %}
-            <footer class="footer">
-                <p>© 2021</p>
-            </footer>
         </div>
     </body>
 
