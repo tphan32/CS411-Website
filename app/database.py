@@ -123,7 +123,14 @@ def searchDB(key):
         } 
         items.append(item)
     return items
-    
+
+def lookupDesc(table, cond, key):
+    conn = db.connect()
+    query = "SELECT description FROM {} WHERE {} LIKE '{}';".format(table, cond, key+"%%")
+    ret = conn.execute(query).fetchall()
+    conn.close()
+    return ret[0][0]
+
 def get_query_2() -> dict:
     query = '''
             SELECT gi1.itemName , gi1.price, gi1.weight, gi1.category 
@@ -250,7 +257,6 @@ def get_race_name():
             "ABscore2" : result[4]
         } 
         races.append(item)
-    print(item)
     return races
 
 
@@ -264,11 +270,12 @@ def get_background_name():
             "name"    : result[0],
         } 
         backgrounds.append(item)
+    print(backgrounds)
     return backgrounds
     
 def get_skills_name(from_where):
     conn = db.connect()
-    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'skill\');').fetchall()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT profName from Proficiency WHERE Type = \'skill\');').fetchall()
     conn.close()
     all = []
     for result in query_results:
@@ -292,7 +299,7 @@ def get_skills_name(from_where):
 
 def get_langs_name(from_where):
     conn = db.connect()
-    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'language\');').fetchall()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT profName from Proficiency WHERE Type = \'language\');').fetchall()
     conn.close()
     all = []
     for result in query_results:

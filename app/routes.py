@@ -300,14 +300,39 @@ def step1():
             "ABscore2"    : "error",
             } 
         ]
-        
     return render_template("createCharacterStep1.html", classes = classes, backgrounds = backgrounds, races = races)
+
+@app.route("/lookupDesc")
+def lookupDesc():
+    #https://flask.palletsprojects.com/en/2.0.x/api/#flask.Request.args
+    key = list(request.args.keys())[0]
+    if key == "class":
+        k = request.args['class']
+        table = "Class"
+        cond = "className"
+    elif key == "race":
+        k = request.args['race']
+        print(k)
+        table = "Race"
+        cond = "raceName"
+    elif key == "bg":
+        k = request.args['bg']
+        table = "Background"
+        cond = "bgName"
+    if '_' in k:
+        k = k.replace("_"," ")       
+    shows = db_helper.lookupDesc(table,cond,k)
+    return jsonify(shows)
 
 @app.route("/createCharacterStep2", methods=["POST"])
 def step2():
     DNDclass = request.form.get("DNDclass")
     DNDraceString = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
+    if "_" in DNDbackground:
+        session["bg"] = DNDbackground.replace("_"," ")
+    else:
+        session["bg"] = DNDbackground
 
     DNDrace = []
     part = ''
@@ -327,12 +352,12 @@ def step3():
     DNDclass = request.form.get("DNDclass")
     DNDrace = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
+    
 
-
-    DNDBskills = db_helper.get_skills_name(DNDbackground)
+    DNDBskills = db_helper.get_skills_name(session["bg"])
     DNDRskills = db_helper.get_skills_name(DNDrace)
     DNDCskills, numCskills = db_helper.get_skills_name(DNDclass)
-
+    
     return render_template("createCharacterStep3.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
          DNDBskills = DNDBskills, DNDRskills=DNDRskills, DNDCskills=DNDCskills, numCskills=numCskills)
 
@@ -342,7 +367,7 @@ def step4():
     DNDclass = request.form.get("className")
     DNDrace = request.form.get("raceName")
     DNDbackground = request.form.get("backgroundName")
-    DNDBlangs, numBlangs = db_helper.get_langs_name(DNDbackground)
+    DNDBlangs, numBlangs = db_helper.get_langs_name(session["bg"])
     DNDRlangs,numRlangs = db_helper.get_langs_name(DNDrace)
 
 
@@ -391,12 +416,10 @@ def step8():
     DNDrace = request.form.get("raceName")
     DNDbackground = request.form.get("backgroundName")
 
-    bPTrait = db_helper.get_background_info(DNDbackground, "Personality Trait")
-    bIdeal = db_helper.get_background_info(DNDbackground, "Ideal")
-    bBond = db_helper.get_background_info(DNDbackground, "Bond")
-    bFlaw = db_helper.get_background_info(DNDbackground, "Flaw")
-
-
-
+    bPTrait = db_helper.get_background_info(session["bg"], "Personality Trait")
+    bIdeal = db_helper.get_background_info(session["bg"], "Ideal")
+    bBond = db_helper.get_background_info(session["bg"], "Bond")
+    bFlaw = db_helper.get_background_info(session["bg"], "Flaw")
+    
     return render_template("createCharacterStep8.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
         bPTrait=bPTrait, bIdeal=bIdeal, bBond=bBond, bFlaw=bFlaw )
