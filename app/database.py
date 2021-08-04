@@ -267,7 +267,7 @@ def get_background_name():
     
 def get_skills_name(from_where):
     conn = db.connect()
-    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'skill\');').fetchall()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT ProfName from Proficiency WHERE Type = \'skill\');').fetchall()
     conn.close()
     all = []
     for result in query_results:
@@ -291,7 +291,7 @@ def get_skills_name(from_where):
 
 def get_langs_name(from_where):
     conn = db.connect()
-    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT Name from Proficiency WHERE Type = \'language\');').fetchall()
+    query_results = conn.execute('SELECT prof_Name FROM TrainedProf WHERE source_name = \''+from_where+'\' AND prof_Name in (SELECT ProfName from Proficiency WHERE Type = \'language\');').fetchall()
     conn.close()
     all = []
     for result in query_results:
@@ -352,11 +352,24 @@ def get_spell_options(DNDclass, level, user_name):
             num_to_learn = [[4]]
         elif DNDclass in ['Cleric','Druid']:
             num_to_learn = conn.execute('SELECT WISmod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
+            save = str(num_to_learn[0][0] + 10)
+            atk = str(num_to_learn[0][0] + 12)
+            conn.execute('UPDATE User_Character SET SpellcastingAbility_2 = \'WIS\' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellSaveDC_2 = '+save+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellAtkBonus_2 = '+atk+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET Spellcasting_Class_2 = \''+DNDclass+'\' WHERE \''+user_name+'\' = PlayerName;')
         elif DNDclass in ['Wizard']:
             num_to_learn = conn.execute('SELECT INTmod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
+            save = str(num_to_learn[0][0] + 10)
+            atk = str(num_to_learn[0][0] + 12)
+            conn.execute('UPDATE User_Character SET SpellcastingAbility_2 = \'INT\' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellSaveDC_2 = '+save+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellAtkBonus_2 = '+atk+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET Spellcasting_Class_2 = \''+DNDclass+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.close()
-
+ 
     num_to_learn = num_to_learn[0][0]
+    
 
     if level == 1:
         num_to_learn +=1
@@ -395,7 +408,7 @@ def update_character_value(field, value, user_name):
 
 def update_character_skills(values, user_name):
     conn = db.connect()
-    dirty_skills = db.execute('SELECT Name from Proficiency WHERE Type = \'skill\';').fetchall()
+    dirty_skills = db.execute('SELECT ProfName from Proficiency WHERE Type = \'skill\';').fetchall()
     skills =[]
     for section in dirty_skills:
         skills.append(section[0])
@@ -477,9 +490,141 @@ def update_character_physical(values, user_name):
 def update_character_bInfo(values, user_name):
     conn = db.connect()
     
+    for part in values:
+        thing = ''
+        for piece in part:
+            if piece == "'":
+                thing += "''"
+            else:
+                thing += piece
+        values[values.index(part)] = thing                
 
     conn.execute('UPDATE User_Character SET PersonalityTraits = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Ideals  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Bonds  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Flaws = \''+values[3]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.close()
+
+def update_character_ST(user_name):
+    conn = db.connect()
+    #SELECT CLASS
+    DNDclass = conn.execute('SELECT ClassLevel FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    DNDclass= DNDclass[0][0]
+    DNDclass = DNDclass[:len(DNDclass)-1]
+
+    ABMOD = conn.execute('SELECT STRmod, DEXmod, CONmod, INTmod, WISmod, CHamod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    ABMOD = ABMOD[0]
+    #SAVING THROWS
+
+    AB_list = ['Strength', 'Dexterity','Constitution','Intelligence','Wisdom','Charisma']
+    ST_mod = ['ST_Strength', 'ST_Dexterity','ST_Constitution','ST_Intelligence','ST_Wisdom','ST_Charisma']
+
+    ST_AB = conn.execute('SELECT prof_name FROM TrainedProf WHERE \''+DNDclass+'\' = source_name AND prof_name not in (SELECT ProfName from Proficiency);').fetchall()
+    ST1 = ST_AB[0][0]
+    ST2 = ST_AB[1][0]
+
+    ST_Boxes = ['Check_Box_11','Check_Box_18','Check_Box_19','Check_Box_20','Check_Box_21','Check_Box_22']
+    
+    for AB in AB_list:
+        if AB == ST1:
+            index = AB_list.index(AB)
+            value = ABMOD[index] + 2
+            value = str(value)
+            conn.execute('UPDATE User_Character SET '+ ST_mod[index] +' = \''+value+'\' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET '+ ST_Boxes[index] +' = 1 WHERE \''+user_name+'\' = PlayerName;')
+        if AB == ST2:
+            index = AB_list.index(AB)
+            value = ABMOD[index] + 2
+            value = str(value)
+            conn.execute('UPDATE User_Character SET '+ ST_mod[index] +' = \''+value+'\' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET '+ ST_Boxes[index] +' = 1 WHERE \''+user_name+'\' = PlayerName;')
+        else:
+            index = AB_list.index(AB)
+            value = ABMOD[index]
+            value = str(value) 
+            conn.execute('UPDATE User_Character SET '+ ST_mod[index] +' = \''+value+'\' WHERE \''+user_name+'\' = PlayerName;')
+
+def update_character_prof_mod(user_name):
+    conn = db.connect()
+    AB = conn.execute('SELECT DISTINCT prof_name FROM TrainedProf WHERE prof_name not in (SELECT ProfName from Proficiency);').fetchall()
+    new_AB = []
+    for part in AB:
+        piece = part[0]
+        new_AB.append(piece)
+    #reorder
+    #new_AB is names
+    new_AB[0],new_AB[1],new_AB[2],new_AB[3],new_AB[4],new_AB[5] = new_AB[4],new_AB[2],new_AB[1],new_AB[3],new_AB[5],new_AB[0]
+    new_AB.remove('Constitution')
+    
+    #These are modifiers
+    ABMOD = conn.execute('SELECT STRmod, DEXmod, CONmod, INTmod, WISmod, CHamod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    ABMOD = ABMOD[0]
+    new_ABMOD = []
+    for item in ABMOD:
+        new_ABMOD.append(item)
+    ABMOD = new_ABMOD
+    del ABMOD[2]
+  
+
+    #skillNames
+    dirty_skills = db.execute('SELECT ProfName from Proficiency WHERE Type = \'skill\';').fetchall()
+    skills =[]
+    for section in dirty_skills:
+        skills.append(section[0])
+    #skill check boxes
+    skills_boxes = ['Check_Box_23','Check_Box_24','Check_Box_25','Check_Box_26','Check_Box_27','Check_Box_28','Check_Box_29',\
+        'Check_Box_30','Check_Box_31','Check_Box_32','Check_Box_33','Check_Box_34','Check_Box_35','Check_Box_36','Check_Box_37',\
+            'Check_Box_38','Check_Box_39','Check_Box_40']
+
+    print(skills)
+    #AB link skill
+    skillSTR = ['Athletics']
+    skillDEX = ['Acrobatics','Sleight of Hand','Stealth']
+    skillINT = ['Arcana','History','Investigation','Nature','Religion']
+    skillWIS = ['Animal Handling','Insight','Medicine','Perception','Survival']
+    skillCHA = ['Deception','Intimidation','Performance','Persuasion']
+
+    skillAB = [skillSTR,skillDEX,skillINT,skillWIS,skillCHA]
+
+    for skill in skills:
+        for ABskill in skillAB:
+            if skill in ABskill:
+                index = skillAB.index(ABskill)
+                index2 = skills.index(skill)
+                is_prof = conn.execute('SELECT '+skills_boxes[index2] +' FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+                
+                new_prof = int.from_bytes(is_prof[0][0], byteorder ='little' )
+  
+                value = ABMOD[index] + 2 * new_prof
+                value = str(value)
+
+                underSkill = skill
+                newUnderSkill = ''
+                for i in underSkill:
+                    if i == ' ':
+                        newUnderSkill += '_'
+                    else:
+                        newUnderSkill += i
+
+
+                conn.execute('UPDATE User_Character SET '+ newUnderSkill +' = '+value+' WHERE \''+user_name+'\' = PlayerName;')
+
+def update_character_MISC(user_name):
+    conn = db.connect()
+    initiative = conn.execute('SELECT DEXmod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    initiative = initiative[0][0]
+    initiative = str(initiative)
+    conn.execute('UPDATE User_Character SET Initiative = '+initiative+' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Speed = 30 WHERE \''+user_name+'\' = PlayerName;')
+
+    CONmod = conn.execute('SELECT CONmod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    CONmod = CONmod[0][0]
+    DNDclass = conn.execute('SELECT ClassLevel FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    DNDclass= DNDclass[0][0]
+    DNDclass = DNDclass[:len(DNDclass)-1]
+    HP = conn.execute('SELECT hitPoints FROM Class WHERE className = \''+DNDclass+'\';').fetchall()
+    HP = HP[0][0]
+    totalHP = HP + CONmod
+    totalHP = str(totalHP)
+    conn.execute('UPDATE User_Character SET HPMax = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET HPCurrent = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')

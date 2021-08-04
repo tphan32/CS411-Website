@@ -518,3 +518,12 @@ def step9():
     db_helper.update_character_bInfo(values, session["username"])
 
     return render_template("createCharacterStep9.html")
+
+@app.route("/createCharacterStepPDF", methods=["POST"])
+def stepPDF():
+
+
+    db_helper.update_character_ST(session["username"])
+    db_helper.update_character_prof_mod(session["username"])
+    db_helper.update_character_MISC(session["username"])
+    return render_template("createCharacterStepPDF.html")
