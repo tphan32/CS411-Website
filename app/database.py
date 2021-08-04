@@ -81,48 +81,19 @@ def update_weapon(input: List[str]):
     conn.execute(query)
     conn.close()
 
-def get_query_1() -> dict:
-    query = '''
-            SELECT *
-            FROM
-                (SELECT Spells.name, level, classes, SpellCastAbility
-                FROM Class JOIN Spells ON (Class.className = Spells.classes)
-                WHERE Casting_Time = '1 reaction'
-
-                UNION
-
-                SELECT Spells.name, level, classes, SpellCastAbility
-                FROM Class JOIN Spells ON (Class.className = Spells.classes)
-                WHERE Casting_Time = '1 bonus action') AS combatNonActionSpells
-                LIMIT 15;
-            '''
-    conn = db.connect()
-    query_results = conn.execute(query).fetchall()
-    conn.close()
-    items = []
-    for result in query_results:
-        item = {
-            "name"    : result[0],
-            "level"   : result[1],
-            "class"  : result[2],
-            "SpellCastAbility": result[3]
-        } 
-        items.append(item)
-    return items
-
-def searchDB(key):
-    conn = db.connect()
-    # Use %% https://stackoverflow.com/questions/42153376/python-mysql-error-when-i-use-s-in-execute
-    q = 'SELECT * FROM Weapon WHERE weaponName LIKE "{}"'.format(key+"%%") + ";"
-    shows = conn.execute(q).fetchall()
-    conn.close()
-    items = []
-    for result in shows:
-        item = {
-            "weaponName": result[0],
-        } 
-        items.append(item)
-    return items
+# def searchDB(key):
+#     conn = db.connect()
+#     # Use %% https://stackoverflow.com/questions/42153376/python-mysql-error-when-i-use-s-in-execute
+#     q = 'SELECT * FROM Weapon WHERE weaponName LIKE "{}"'.format(key+"%%") + ";"
+#     shows = conn.execute(q).fetchall()
+#     conn.close()
+#     items = []
+#     for result in shows:
+#         item = {
+#             "weaponName": result[0],
+#         } 
+#         items.append(item)
+#     return items
 
 def lookupDesc(table, cond, key):
     conn = db.connect()
@@ -131,35 +102,7 @@ def lookupDesc(table, cond, key):
     conn.close()
     return ret[0][0]
 
-def get_query_2() -> dict:
-    query = '''
-            SELECT gi1.itemName , gi1.price, gi1.weight, gi1.category 
-            FROM GeneralItem gi1 JOIN (SELECT category, MAX(price) as  maxPrice 
-                                    FROM GeneralItem 
-                                    WHERE category LIKE "Musical instrument" 
-                                    GROUP BY category) AS ins ON (gi1.category = ins.category AND gi1.price = ins.maxPrice) 
-            UNION 
-            SELECT itemName, price, weight, category 
-            FROM GeneralItem gi2 
-            WHERE price > 1
-            LIMIT 15;
-            '''
-    conn = db.connect()
-    query_results = conn.execute(query).fetchall()
-    conn.close()
-    items = []
-    for result in query_results:
-        item = {
-            "name"    : result[0],
-            "price"   : result[1],
-            "weight"  : result[2],
-            "category": result[3]
-        } 
-        items.append(item)
-    return items
-
-
-def get_spellName():
+def get_spellInfo():
     conn = db.connect()
     query_results = conn.execute('SELECT * FROM Spells ORDER BY level;').fetchall()
     conn.close()
@@ -197,6 +140,58 @@ def add_spell(input: List[str]):
     query = 'INSERT INTO Spells(name,level,school,classes,Casting_Time,spellRange,Components,Duration,description) VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");'.format(input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8])
     query_results = conn.execute(query)
     conn.close()
+
+def get_raceInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Race ORDER BY speed;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "subrace"   : result[1],
+            "abilityScoreIncrease1"  : result[2],
+            "abilityScoreIncrease1": result[3],
+            "ability1": result[4],
+            "ability2": result[5],
+            "ageRange": result[6],
+            "description": result[7],
+            "size": result[8],
+            "speed": result[9]
+        } 
+        items.append(item)
+    return items
+
+def get_classInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Class ORDER BY hitPoints;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "subclass"   : result[1],
+            "hitPoints"  : result[2],
+            "description": result[3],
+            "gold": result[4],
+            "spellCastAbility": result[5],
+        } 
+        items.append(item)
+    return items
+
+def get_bckgInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Background;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "description": result[1],
+            "equipment": result[2],
+        } 
+        items.append(item)
+    return items
 
 def register_user(input_user: str, input_password):
     conn = db.connect()

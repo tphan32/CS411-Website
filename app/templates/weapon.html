@@ -3,24 +3,42 @@
     Weapon
 {% endblock %}
 {% block content %}
+<input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
+
+<ul></ul>
+
+    <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#Input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#spell tr").filter(function() {
+                    $(this).toggle($(this).text()
+                    .toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+    
     <div class="container">
-    <table class="table">
-        <table class="table">
+    <table id = "Weapons" class="table" border = "1" cellpadding = "1" cellspacing = "1">
             <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Cost</th>
-                <th scope="col">Damage</th>
-                <th scope="col">Damage Type</th>
-                <th scope="col">Weight</th>
-                <th scope="col">Properties</th>
-                <th scope="col">Category</th>
+            <tr class = "header">
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">#</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Name</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Cost</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Damage</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Damage Type</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Weight</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Properties</th>
+                <th style = "background-color: rgb(165, 137, 61)" scope="col">Category</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id = "weapon">
             {% for item in items %}
-
                 <tr>
                     <th scope="row">{{loop.index}}</th>
                     <td>{{item.name}}</td>
@@ -37,22 +55,26 @@
     </div>
 
     <div>
-        <h3> Random A New Weapon </h3>
+        <h6> Random A New Weapon </h6>
         <form action="/randomNewWeapon">
             <input type="submit" value="Random">
         </form>
     </div>
 
-    <div>
-        <h3> Delete values </h3>
+    <p></p>
+    <details>
+            <summary>   Delete</summary>
+        <p></p>
         <form action="/removeWeapon" method="post">
             <input autocomplete="off" autofocus="off" placeholder="Weapon Name" name="weaponName" type="text">
             <input type="submit" name="submit_button" value="Remove">
         </form>
-    </div>
+    </details>
 
-    <div>
-        <h3> Update values </h3>
+    <p></p>
+    <details>
+            <summary>   Update values </summary>
+        <p></p>
             <form action="/updWeapon" method="post">
             <label for="name">Old Weapon name:</label><br>
             <input type="text" id="oldname" name="oldname"><br>
@@ -60,10 +82,12 @@
             <input type="text" id="newname" name="newname"><br>
             <button type="submit">Submit</button>
         </form>
-    </div>
+    </details>
 
-    <div>
-        <h3> Add values </h3>
+    <p></p>
+    <details>
+            <summary>   Add values </summary>
+        <p></p>
             <form action="/add" method="post">
             <label for="name">Weapon name:</label><br>
             <input type="text" id="name" name="name"><br>
@@ -81,5 +105,5 @@
             <input type="text" id="category" name="category"><br>
             <button type="submit">Submit</button>
             </form>
-        </div>
+        </details>
 {% endblock %}
