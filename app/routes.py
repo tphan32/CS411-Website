@@ -1,4 +1,5 @@
 from datetime import datetime
+from re import L
 from app import database as db_helper
 from app import app
 from flask import render_template, request, redirect, session, jsonify
@@ -246,6 +247,7 @@ def login():
         if user_exists:
             if access:
                 session["username"] = inputUserName
+                db_helper.create_character(inputUserName)
                 return redirect("/characterSheet")
             else:
                 return render_template("home.html")
@@ -300,7 +302,8 @@ def step1():
             "ABscore2"    : "error",
             } 
         ]
-        
+    
+    
     return render_template("createCharacterStep1.html", classes = classes, backgrounds = backgrounds, races = races)
 
 @app.route("/createCharacterStep2", methods=["POST"])
@@ -308,6 +311,8 @@ def step2():
     DNDclass = request.form.get("DNDclass")
     DNDraceString = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
+
+
 
     DNDrace = []
     part = ''
@@ -319,6 +324,9 @@ def step2():
             part = ''
     DNDrace.append(part)
 
+    db_helper.update_character_value("ClassLevel", DNDclass + "1", session["username"])
+    db_helper.update_character_value("Background", DNDbackground, session["username"])
+    db_helper.update_character_value("Race", DNDrace[0], session["username"])
 
     return render_template("createCharacterStep2.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground)
 
@@ -327,6 +335,32 @@ def step3():
     DNDclass = request.form.get("DNDclass")
     DNDrace = request.form.get("DNDrace")
     DNDbackground = request.form.get("DNDbackground")
+
+    ABSTR = request.form.get("ABSTRinput")
+    ABmodSTR = request.form.get("ABSTRmodinput")
+    ABDEX = request.form.get("ABDEXinput")
+    ABmodDEX = request.form.get("ABDEXmodinput")
+    ABCON = request.form.get("ABCONinput")
+    ABmodCON = request.form.get("ABCONmodinput")
+    ABINT = request.form.get("ABINTinput")
+    ABmodINT = request.form.get("ABINTmodinput")
+    ABWIS = request.form.get("ABWISinput")
+    ABmodWIS = request.form.get("ABWISmodinput")
+    ABCHA = request.form.get("ABCHAinput")
+    ABmodCHA = request.form.get("ABCHAmodinput")
+
+    db_helper.update_character_value("STR",ABSTR,session["username"])
+    db_helper.update_character_value("STRmod",ABmodSTR,session["username"])
+    db_helper.update_character_value("DEX",ABDEX,session["username"])
+    db_helper.update_character_value("DEXmod",ABmodDEX,session["username"])
+    db_helper.update_character_value("CON",ABCON,session["username"])
+    db_helper.update_character_value("CONmod",ABmodCON,session["username"])
+    db_helper.update_character_value("INTT",ABINT,session["username"])
+    db_helper.update_character_value("INTmod",ABmodINT,session["username"])
+    db_helper.update_character_value("WIS",ABWIS,session["username"])
+    db_helper.update_character_value("WISmod",ABmodWIS,session["username"])
+    db_helper.update_character_value("CHA",ABCHA,session["username"])
+    db_helper.update_character_value("CHamod",ABmodCHA,session["username"])
 
 
     DNDBskills = db_helper.get_skills_name(DNDbackground)
@@ -345,6 +379,22 @@ def step4():
     DNDBlangs, numBlangs = db_helper.get_langs_name(DNDbackground)
     DNDRlangs,numRlangs = db_helper.get_langs_name(DNDrace)
 
+    bSkill1 = request.form.get("bSkill1")
+    bSkill2 = request.form.get("bSkill2")
+    rSkill = request.form.get("rSkill")
+
+    Prof1 = request.form.get("Prof0")
+    Prof2 = request.form.get("Prof1")
+    Prof3 = request.form.get("Prof2")
+    Prof4 = request.form.get("Prof3")
+
+    skills = [bSkill1, bSkill2, rSkill, Prof1, Prof2, Prof3, Prof4]
+    new_skills =[]
+
+    for part in skills:
+        if part != None and part not in new_skills:
+            new_skills.append(part)
+    db_helper.update_character_skills(new_skills,session["username"])
 
     return render_template("createCharacterStep4.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
          DNDBlangs = DNDBlangs, DNDRlangs=DNDRlangs, numBlangs=numBlangs, numRlangs=numRlangs)
@@ -357,9 +407,26 @@ def step5():
     DNDbackground = request.form.get("backgroundName")
 
     DND_equipment_options = db_helper.get_equip_options(DNDclass)
+    num_options = len(DND_equipment_options)
+
+    lang1 = request.form.get("Lang0")
+    lang2 = request.form.get("Lang1")
+    lang3 = request.form.get("Langr0")
+    lang4 = request.form.get("Langr1")
+
+    dirty_langs = [lang1,lang2,lang3,lang4]
+    clean_langs=[]
+    for lang in dirty_langs:
+        if lang != None:
+            clean_langs.append(lang)
+    print(lang1, lang2, lang3, lang4)
+
+    db_helper.update_character_langs(clean_langs,session["username"])
 
     return render_template("createCharacterStep5.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
-        DND_equipment_options=DND_equipment_options)
+        DND_equipment_options=DND_equipment_options, num_options=num_options)
+
+
 
 @app.route("/createCharacterStep6", methods=["POST"])
 def step6():
@@ -367,8 +434,18 @@ def step6():
     DNDrace = request.form.get("raceName")
     DNDbackground = request.form.get("backgroundName")
 
-    DND_0spell_options, DND_num_0spells = db_helper.get_spell_options(DNDclass, 0)
-    DND_1spell_options, DND_num_1spells = db_helper.get_spell_options(DNDclass, 1)
+    DND_0spell_options, DND_num_0spells = db_helper.get_spell_options(DNDclass, 0,session["username"])
+    DND_1spell_options, DND_num_1spells = db_helper.get_spell_options(DNDclass, 1,session["username"])
+
+    equip1 = request.form.get("option0")
+    equip2 = request.form.get("option1")
+    equip3 = request.form.get("option2")
+    equip4 = request.form.get("option3")
+
+    dirty_equip = [equip1, equip2, equip3, equip4]
+
+
+    db_helper.update_character_equipment(dirty_equip,session["username"])
 
     return render_template("createCharacterStep6.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
         DND_0spell_options=DND_0spell_options, DND_num_0spells = DND_num_0spells, DND_1spell_options = DND_1spell_options,\
@@ -381,6 +458,22 @@ def step7():
     DNDrace = request.form.get("raceName")
     DNDbackground = request.form.get("backgroundName")
 
+    cantrip1 = request.form.get("spell0_0")
+    cantrip2 = request.form.get("spell0_1")
+    cantrip3 = request.form.get("spell0_2")
+    cantrip4 = request.form.get("spell0_3")
+    cantrips = [cantrip1,cantrip2,cantrip3,cantrip4]
+
+    lvl1_1 = request.form.get("spell1_0")
+    lvl1_2 = request.form.get("spell1_1")
+    lvl1_3 = request.form.get("spell1_2")
+    lvl1_4 = request.form.get("spell1_3")
+    lvl1_5 = request.form.get("spell1_4")
+    lvl1_6 = request.form.get("spell1_5")
+    lvl_1s = [lvl1_1,lvl1_2,lvl1_3,lvl1_4,lvl1_5,lvl1_6]
+
+    db_helper.update_character_spells(cantrips, session["username"], 0)
+    db_helper.update_character_spells(lvl_1s, session["username"], 1)
 
     return render_template("createCharacterStep7.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground)
 
@@ -396,7 +489,32 @@ def step8():
     bBond = db_helper.get_background_info(DNDbackground, "Bond")
     bFlaw = db_helper.get_background_info(DNDbackground, "Flaw")
 
+    char_name = request.form.get("char_name")
+    alignment = request.form.get("alignment")
+    age = request.form.get("age")
+    eye_color = request.form.get("eye_color")
+    h_feet = request.form.get("h_feet")
+    h_inches = request.form.get("h_inches")
+    weight = request.form.get("weight")
+    skin_color = request.form.get("skin_color")
+    hair_color = request.form.get("hair_color")
 
+    physical = [char_name, alignment, age, eye_color, h_feet, h_inches, weight, skin_color, hair_color]
+
+    db_helper.update_character_physical(physical, session["username"])
 
     return render_template("createCharacterStep8.html", DNDclass = DNDclass, DNDrace=DNDrace, DNDbackground = DNDbackground,\
         bPTrait=bPTrait, bIdeal=bIdeal, bBond=bBond, bFlaw=bFlaw )
+
+@app.route("/createCharacterStep9", methods=["POST"])
+def step9():
+
+    Trait = request.form.get("Trait")
+    Ideal = request.form.get("Ideal")
+    Bond = request.form.get("Bond")
+    Flaw = request.form.get("Flaw")
+
+    values = [Trait,Ideal,Bond,Flaw]
+    db_helper.update_character_bInfo(values, session["username"])
+
+    return render_template("createCharacterStep9.html")

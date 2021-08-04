@@ -4,14 +4,14 @@
 {% endblock %}
 {% block content %}
     
-
+<form action="/createCharacterStep4" method="post">
 <p>You gain skills from your choices:
   <br>
   <br>
   <strong>Class: </strong>{{DNDclass}} - choose {{numCskills}} skills
   <br>
   
-
+  
 
 
   {% for part in range(numCskills) %}
@@ -38,6 +38,7 @@
   {% for item in DNDRskills %}
   <small>
   -&ensp;{{item.name}}
+  <input type="text" name=rSkill id=rSkill, value ={{item.name}} hidden></input>
   </small><br>
   {% endfor %}
   
@@ -48,16 +49,18 @@
 <br>
 
 <small>-&ensp;{{DNDBskills[0].name}}
+  <input type="text" name=bSkill1 id=bSkill1, value ={{DNDBskills[0].name}} hidden></input>
 <br>
 -&ensp;{{DNDBskills[1].name}}
+<input type="text" name=bSkill2 id=bSkill2, value ={{DNDBskills[1].name}} hidden></input>
 </small>
 </p>
 
-<form action="/createCharacterStep4" method="post">
+
 
 <input type="submit" value="Next Step"></button>
 <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
-<input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+<input type="text" name="backgroundName" id="backgroundName" value = "{{DNDbackground}}" hidden><br>
 <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
 
 </form>

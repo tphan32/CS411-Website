@@ -12,9 +12,9 @@
 Cantrip Spells for {{DNDclass}}
 <br>
 {%for part in range(DND_num_0spells) %}
-<select name=spell id=spell>
+<select name="spell0_{{part}}" id= "spell0_{{part}}">
     {% for item in DND_0spell_options %}
-    <option value={{item.name}}>{{item.name}}</option>
+    <option value="{{item.name}}">{{item.name}}</option>
     {% endfor %}
   </select>  
     {% endfor %} 
@@ -24,9 +24,9 @@ Cantrip Spells for {{DNDclass}}
 Level 1 Spells for {{DNDclass}}
 <br>
   {%for part in range(DND_num_1spells) %}
-<select name=spell id=spell>
+<select name="spell1_{{part}}" id="spell1_{{part}}">
     {% for item in DND_1spell_options %}
-    <option value={{item.name}}>{{item.name}}</option>
+    <option value="{{item.name}}">{{item.name}}</option>
     {% endfor %}
   </select>  
     {% endfor %} 
@@ -34,7 +34,7 @@ Level 1 Spells for {{DNDclass}}
 
   
   <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
-  <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+  <input type="text" name="backgroundName" id="backgroundName" value = "{{DNDbackground}}" hidden><br>
   <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
 <input type="submit" value="Next Step"></button>
 </form>

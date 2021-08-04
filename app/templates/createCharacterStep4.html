@@ -8,9 +8,9 @@
 {{DNDbackground}} Languages:
 <br>
 
-
+<form action="/createCharacterStep5" method="post">
 {% for part in range(numBlangs) %}
-<select name=Prof{{part}} id=Prof{{part}}>
+<select name=Lang{{part}} id=Lang{{part}}>
     {% for item in DNDBlangs %}
     <option value={{item.name}}>{{item.name}}</option>
     {% endfor %}
@@ -22,7 +22,7 @@
   {{DNDrace}} Languages:
 <br>
   {% for part in range(numRlangs) %}
-<select name=Prof{{part}} id=Prof{{part}}>
+<select name=Langr{{part}} id=Langr{{part}}>
     {% for item in DNDRlangs %}
     <option value={{item.name}}>{{item.name}}</option>
     {% endfor %}
@@ -32,11 +32,12 @@
 
 
 
-  <form action="/createCharacterStep5" method="post">
-
+  
+    <br>
+    <br>
     <input type="submit" value="Next Step"></button>
     <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
-    <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+    <input type="text" name="backgroundName" id="backgroundName" value = "{{DNDbackground}}" hidden><br>
     <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
     
     </form>
