@@ -3,19 +3,44 @@
     New Weapon
 {% endblock %}
 {% block content %}
+<input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
+
+<ul></ul>
+
+    <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#Input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#weapon tr").filter(function() {
+                    $(this).toggle($(this).text()
+                    .toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+
+<div style="text-align:center;">
+    <h4> Weapons with Random Element</h4>
+</div>
+
     <div class="container">
         <table class="table">
             <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Cost</th>
-                <th scope="col">Damage</th>
-                <th scope="col">Damage Type</th>
-                <th scope="col">Weight</th>
-                <th scope="col">Properties</th>
-                <th scope="col">Category</th>
-            </tr>
+                <tr class = "header">
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">#</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Name</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Cost</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Damage</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Damage Type</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Weight</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Properties</th>
+                    <th style = "background-color: rgb(165, 137, 61)" scope="col">Category</th>
+                </tr>
             </thead>
             <tbody>
             {% for item in items %}
