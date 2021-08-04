@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}
+    Character Creation Step 7:
+{% endblock %}
+{% block content %}
+<p></p>
+<h4> Explore Other Features:</h4>
+<!-- ?\<meta http-equiv="refresh" content="time; URL=new_url" /> -->
+<li>
+    <a href="{{ url_for('weapon') }}">Weapons</a>
+</li>
+<li>
+    <a href="{{ url_for('armor') }}">Armors</a>
+</li>
+<li>
+    <a href="{{ url_for('genitem') }}">General Items</a>
+</li>
+<li>
+    <a href="{{ url_for('proficiency') }}">Proficiency</a>
+</li>
+{% endblock %}

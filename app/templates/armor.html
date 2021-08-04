@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block title %}
+    Classs
+{% endblock %}
+{% block content %}
+<p></p>
+<input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
+
+<ul></ul>
+
+    <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#Input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#armor tr").filter(function() {
+                    $(this).toggle($(this).text()
+                    .toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+    <div style="text-align:center;">
+        <h4> Armors</h4>
+    </div>
+
+    <div class="container">
+    <table id = "Armor" class="table" border = "1" style="width: 100%;">
+        <thead>
+            <tr class = "header">
+                <th style = "background-color: rgb(165, 137, 61)">Name</th>
+                <th style = "background-color: rgb(165, 137, 61)">Cost</th>
+                <th style = "background-color: rgb(165, 137, 61)">Armor Class</th>
+                <th style = "background-color: rgb(165, 137, 61)">Strength Needed</th>
+                <th style = "background-color: rgb(165, 137, 61)">Stealth Disadvantage</th>
+                <th style = "background-color: rgb(165, 137, 61)">Weight</th>
+                <th style = "background-color: rgb(165, 137, 61)">Category</th>
+            </tr>
+            </thead>
+            <tbody id = "armor">
+            {% for item in items %}
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td>{{item.cost}}</td>
+                    <td>{{item.armorClass}}</td>
+                    <td>{{item.strNeeded}}</td>
+                    <td>{{item.stealthDisadv}}</td>
+                    <td>{{item.weight}}</td>
+                    <td>{{item.category}}</td>
+                </tr>
+            {% endfor %}    
+            </tbody>
+
+    </table>
+    </div>
+
+    <!-- <div>
+        <h6> Random A New Class </h6>
+        <form action="/randomNewClass">
+            <input type="submit" value="Random">
+        </form>
+    </div> -->
+
+{% endblock %}
