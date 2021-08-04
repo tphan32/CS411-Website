@@ -312,7 +312,7 @@ def get_langs_name(from_where):
 
     if from_where  == 'Half-Elf':
         return all, 3
-    elif from_where in ['Guild Artisan', 'Guild Merchant', 'Hermit', 'Noble', 'Outlander']:
+    elif from_where in ['Guild Artisan', 'Guild Merchant', 'Hermit', 'Noble', 'Knight', 'Outlander']:
         return all, 1
     elif from_where in ['Charlatan', 'Criminal', 'Spy', 'Entertainer', 'Gladiator','Folk Hero','Sailor','Pirate', 'Soldier','Urchin']:
         return all, 0
@@ -332,21 +332,22 @@ def get_equip_options(DNDclass):
         new_part=[]
         for piece in part:
             little_part = []
-            for equip in piece:    
+            for equip in piece: 
                 if equip != None:
                     little_part.append(equip)
-                    new_part.append(little_part)    
+                    if little_part not in new_part:
+                        new_part.append(little_part)    
 
         options.append(new_part)
     conn.close()
     return options
 
-def get_spell_options(DNDclass, level):
+def get_spell_options(DNDclass, level, user_name):
     if level == 0:
         level_name ='0'
     elif level == 1:
         level_name ='1'
-
+    num_to_learn = 0
     conn = db.connect()
     num_choice_list = conn.execute('SELECT * FROM Spells WHERE classes = \''+DNDclass+'\'  AND level = \''+level_name+'\';').fetchall() 
     if level == 0:
@@ -355,12 +356,21 @@ def get_spell_options(DNDclass, level):
     elif level == 1:
         if DNDclass == "Fighter":
             num_to_learn = [[0]]
-        else:
+        elif DNDclass in ['Bard']:
             num_to_learn = [[4]]
+        elif DNDclass in ['Cleric','Druid']:
+            num_to_learn = conn.execute('SELECT WISmod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
+        elif DNDclass in ['Wizard']:
+            num_to_learn = conn.execute('SELECT INTmod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
     conn.close()
 
     num_to_learn = num_to_learn[0][0]
 
+    if level == 1:
+        num_to_learn +=1
+
+    if num_to_learn == 0:
+        num_to_learn = 1
     if num_to_learn == None:
         num_to_learn = 0
     return num_choice_list, num_to_learn
@@ -374,5 +384,110 @@ def get_background_info(background, info):
     for part in information:
         clean_info.append(part[3])
 
-    
+    conn.close()
     return clean_info
+
+
+
+def create_character(user_name):
+     conn = db.connect()
+
+     conn.execute('INSERT INTO User_Character(PlayerName) VALUES(\''+user_name+'\')')
+     conn.close()
+
+def update_character_value(field, value, user_name):
+    conn = db.connect()
+
+    conn.execute('UPDATE User_Character SET '+field+' = \''+value+'\' WHERE \''+user_name+'\' = PlayerName')
+    conn.close()
+
+def update_character_skills(values, user_name):
+    conn = db.connect()
+    dirty_skills = db.execute('SELECT Name from Proficiency WHERE Type = \'skill\';').fetchall()
+    skills =[]
+    for section in dirty_skills:
+        skills.append(section[0])
+    skills_boxes = ['Check_Box_23','Check_Box_24','Check_Box_25','Check_Box_26','Check_Box_27','Check_Box_28','Check_Box_29',\
+        'Check_Box_30','Check_Box_31','Check_Box_32','Check_Box_33','Check_Box_34','Check_Box_35','Check_Box_36','Check_Box_37',\
+            'Check_Box_38','Check_Box_39','Check_Box_40']
+
+    for box in skills_boxes:
+        conn.execute('UPDATE User_Character SET '+box+' = 0 WHERE \''+user_name+'\' = PlayerName')
+
+   
+    for skill in values:
+        if skill in skills:
+            index = skills.index(skill)
+            conn.execute('UPDATE User_Character SET '+skills_boxes[index]+' = 1 WHERE \''+user_name+'\' = PlayerName')
+    conn.close()
+
+
+def update_character_langs(values, user_name):
+    conn = db.connect()
+    
+    str_langs = ''
+    for value in values:
+        str_langs += value +', '
+    str_langs = 'You know how to speak ' + str_langs[:len(str_langs)-2]
+
+    conn.execute('UPDATE User_Character SET ProficienciesLang = \''+str_langs+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.close()
+
+def update_character_equipment(values, user_name):
+    words =''
+    for part in values:
+        word = ''
+        for piece in part:
+            if piece not in ["'",'"','/', '[', ']']:
+                word += piece
+        words += word + ', '
+    words = words[:len(words)-2]
+
+   
+    conn = db.connect()
+    conn.execute('UPDATE User_Character SET Equipment = \''+words+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.close()
+
+
+def update_character_spells(values, user_name, spell_level):
+    if spell_level == 0:
+        boxes = ['Spells_1014', 'Spells_1016', 'Spells_1017', 'Spells_1018']
+    elif spell_level == 1:
+        boxes = ['Spells_1015', 'Spells_1023','Spells_1024', 'Spells_1025', 'Spells_1026', 'Spells_1027']
+    conn = db.connect()
+    
+    for box in boxes:
+        conn.execute('UPDATE User_Character SET '+box+' = \'None\' WHERE \''+user_name+'\' = PlayerName;')
+    
+    count = 0
+    for spell in values:
+        if spell != None:
+            conn.execute('UPDATE User_Character SET '+boxes[count]+' = \''+spell+'\' WHERE \''+user_name+'\' = PlayerName;')
+            count += 1
+    
+    
+    conn.close()
+
+def update_character_physical(values, user_name):
+    conn = db.connect()
+    
+
+    conn.execute('UPDATE User_Character SET CharacterName = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Alignment  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Age  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Eyes = \''+values[3]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Height  = \''+str(values[4])+' feet '+str(values[5])+' inches\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Weightt  = \''+values[6]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Skin  = \''+values[7]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Hair  = \''+values[8]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.close()
+
+def update_character_bInfo(values, user_name):
+    conn = db.connect()
+    
+
+    conn.execute('UPDATE User_Character SET PersonalityTraits = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Ideals  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Bonds  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Flaws = \''+values[3]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.close()

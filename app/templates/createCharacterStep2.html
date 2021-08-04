@@ -154,7 +154,19 @@
     document.getElementById('WIS').innerHTML = Number(document.getElementById('rawWIS').innerHTML) + Number(document.getElementById('raceWIS').innerHTML)
     document.getElementById('CHA').innerHTML = Number(document.getElementById('rawCHA').innerHTML) + Number(document.getElementById('raceCHA').innerHTML) 
 
+    document.getElementById('ABSTRinput').value = Number(document.getElementById('STR').innerHTML)
+    document.getElementById('ABDEXinput').value = Number(document.getElementById('DEX').innerHTML)
+    document.getElementById('ABCONinput').value = Number(document.getElementById('CON').innerHTML)
+    document.getElementById('ABINTinput').value = Number(document.getElementById('INT').innerHTML)
+    document.getElementById('ABWISinput').value = Number(document.getElementById('WIS').innerHTML)
+    document.getElementById('ABCHAinput').value = Number(document.getElementById('CHA').innerHTML)
     modifier()
+    document.getElementById('ABSTRmodinput').value = Number(document.getElementById('modSTR').innerHTML)
+    document.getElementById('ABDEXmodinput').value = Number(document.getElementById('modDEX').innerHTML)
+    document.getElementById('ABCONmodinput').value = Number(document.getElementById('modCON').innerHTML)
+    document.getElementById('ABINTmodinput').value = Number(document.getElementById('modINT').innerHTML)
+    document.getElementById('ABWISmodinput').value = Number(document.getElementById('modWIS').innerHTML)
+    document.getElementById('ABCHAmodinput').value = Number(document.getElementById('modCHA').innerHTML)
     }
 </script>
 
@@ -245,7 +257,21 @@ window.onload = race_bonus;
   <input type="submit" value="Next Step"></button>
   <input type="text" name="DNDclass" id="DNDclass" value = {{DNDclass}} hidden><br>
   <input type="text" name="DNDrace" id="DNDrace" value = {{DNDrace[0]}} hidden><br>
-  <input type="text" name="DNDbackground" id="DNDbackground" value = {{DNDbackground}} hidden><br>  
+  <input type="text" name="DNDbackground" id="DNDbackground" value = "{{DNDbackground}}" hidden><br>
+
+  <input type="text" name="ABSTRinput" id="ABSTRinput", value ="" hidden></input>
+  <input type="text" name="ABDEXinput" id="ABDEXinput", value ="" hidden></input>
+  <input type="text" name="ABCONinput" id="ABCONinput", value ="" hidden></input>
+  <input type="text" name="ABINTinput" id="ABINTinput", value ="" hidden></input>
+  <input type="text" name="ABWISinput" id="ABWISinput", value ="" hidden></input>
+  <input type="text" name="ABCHAinput" id="ABCHAinput", value ="" hidden></input><br>
+
+  <input type="text" name="ABSTRmodinput" id="ABSTRmodinput", value ="" hidden></input>
+  <input type="text" name="ABDEXmodinput" id="ABDEXmodinput", value ="" hidden></input>
+  <input type="text" name="ABCONmodinput" id="ABCONmodinput", value ="" hidden></input>
+  <input type="text" name="ABINTmodinput" id="ABINTmodinput", value ="" hidden></input>
+  <input type="text" name="ABWISmodinput" id="ABWISmodinput", value ="" hidden></input>
+  <input type="text" name="ABCHAmodinput" id="ABCHAmodinput", value ="" hidden></input><br>
 
 </form>
 {% endblock %}

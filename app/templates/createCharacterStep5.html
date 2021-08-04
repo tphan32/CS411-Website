@@ -5,23 +5,28 @@
 {% block content %}
 
 <strong>Pick your class equipment!</strong>
-
+<form action="/createCharacterStep6" method="post">
 <br><br>
 
 <table>
   <tr>
-  {%for part in DND_equipment_options%}
-  <th >Options  </th>
+  {%for part in range(num_options)%}
+  <th >Option {{part}}  </th>
   {% endfor %}
   </tr>
 
   <tr>
-{%for part in DND_equipment_options%}
+{%for part in range(num_options)%}
 <td>
-  <select name={{part}} id={{part}}>
+  <select name="option{{part}}" id={{part}}>
 
-  {%for piece in part%}
-    <option value={{piece}}>{{piece}}</option>
+  {%for piece in DND_equipment_options[part] %}
+
+    <option value="{{piece}}">
+      {%for scrap in piece%}
+      {{scrap}}  
+      /
+    {%endfor%}</option>
 
   {%endfor%}
 </select>
@@ -32,11 +37,11 @@
 
 </table>
 
-<form action="/createCharacterStep6" method="post">
+
 
   <input type="submit" value="Next Step"></button>
   <input type="text" name="className" id="className" value = {{DNDclass}} hidden><br>
-  <input type="text" name="backgroundName" id="backgroundName" value = {{DNDbackground}} hidden><br>
+  <input type="text" name="backgroundName" id="backgroundName" value = "{{DNDbackground}}" hidden><br>
   <input type="text" name="raceName" id="raceName" value = {{DNDrace}} hidden><br>
 
 </form>
