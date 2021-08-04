@@ -15,15 +15,15 @@ def home():
         return render_template("home.html")
     return redirect("/characterSheet")
     
-@app.route("/search")
-def search():
-    return render_template("search.html")
+# @app.route("/search")
+# def search():
+#     return render_template("search.html")
 
-@app.route("/searchHelper")
-def searchHelper():
-    key = request.args.get("q")
-    shows = db_helper.searchDB(key)
-    return jsonify(shows)
+# @app.route("/searchHelper")
+# def searchHelper():
+#     key = request.args.get("q")
+#     shows = db_helper.searchDB(key)
+#     return jsonify(shows)
 
 @app.route("/logout")
 def logout():
@@ -101,6 +101,63 @@ def randNewWeapon():
     weapons = db_helper.call_pro_rand_weapon()
     return render_template("newWeapon.html", items = weapons)
 
+@app.route("/randomNewSpell")
+def randNewSpell():
+    weapons = db_helper.call_pro_rand_spell()
+    return render_template("newWeapon.html", items = weapons)
+
+@app.route("/classes/")
+def classes():
+    try:
+        items = db_helper.get_classInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "subclass"   : "error",
+            "hitPoints"  : "error",
+            "description": "error",
+            "gold": "error",
+            "spellCastAbility": "error"
+            } 
+        ]
+    return render_template("classes.html", items = items)
+
+@app.route("/backgrounds/")
+def backgrounds():
+    try:
+        items = db_helper.get_bckgInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "description": "error",
+            "equipment": "error"
+            } 
+        ]
+    return render_template("backgrounds.html", items = items)
+
+@app.route("/races/")
+def races():
+    try:
+        items = db_helper.get_raceInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "subrace"   : "error",
+            "abilityScoreIncrease1"  : "error",
+            "abilityScoreIncrease1": "error",
+            "ability1": "error",
+            "ability2": "error",
+            "ageRange": "error",
+            "description": "error",
+            "size": "error",
+            "speed": "error"
+            }
+        ]
+    return render_template("races.html", items = items)
+
 @app.route("/about/")
 def about():
     return render_template("about.html")
@@ -132,39 +189,6 @@ def removeAccount():
     else:
         return redirect("/profile")
 
-@app.route("/query1")
-def query1():
-    try:
-        items = db_helper.get_query_1()
-    except:
-        items = [
-            {
-                "name"    : "error",
-                "level"   : "error",
-                "class"  : "error",
-                "SpellCastAbility": "error"
-            }
-        ]
-    return render_template("query1.html", items = items)
-
-@app.route("/query2/")
-def query2():
-    try:
-        items = db_helper.get_query_2()
-    except:
-        items = [
-            {
-                "name"    : "error",
-                "price"   : "error",
-                "weight"  : "error",
-                "category": "error"
-            }
-        ]
-    return render_template("query2.html", items = items)
-
-
-
-
 @app.route("/removeSpell", methods=["POST"])
 def removeSpell():
     if request.method == "POST":
@@ -175,7 +199,7 @@ def removeSpell():
 @app.route("/spells/")
 def spells():
     try:
-        items = db_helper.get_spellName()
+        items = db_helper.get_spellInfo()
     except:
         items = [
             {
@@ -211,10 +235,10 @@ def createSpell():
         level = request.form.get("level")
         school = request.form.get("school")
         classes = request.form.get("classes")
-        Casting_Time = request.form.get("Casting_Time")
+        Casting_Time = request.form.get("castingTime")
         spellRange = request.form.get("spellRange")
-        Components = request.form.get("Components")
-        Duration = request.form.get("Duration")
+        Components = request.form.get("components")
+        Duration = request.form.get("duration")
         description = request.form.get("description")
         input.append(name)
         input.append(level)

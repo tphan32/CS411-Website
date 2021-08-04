@@ -1,11 +1,11 @@
 .message {
     font-weight: 600;
-    color: rgba(218, 86, 35, 0.733);
+    color: rgb(165, 137, 61);
 }
 .navbar {
     font-size: 1em;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: white;
+    color: black;
     padding: 8px 5px 8px 5px;
 }
 
@@ -34,9 +34,16 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: #E84A27;
+  background-color: rgb(165, 137, 61);
   color: white;
   text-align: center;
 }
 
+body {
+    background-image: url('https://www.pngkey.com/png/detail/78-787254_tinwtqb-d-d-logo-phone-background.png');;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}
 
