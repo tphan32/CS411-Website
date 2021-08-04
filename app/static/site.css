@@ -29,15 +29,6 @@
 }
 
 
-.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: rgb(165, 137, 61);
-  color: white;
-  text-align: center;
-}
 
 body {
     background-image: url('https://www.pngkey.com/png/detail/78-787254_tinwtqb-d-d-logo-phone-background.png');;

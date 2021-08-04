@@ -398,7 +398,7 @@ def update_character_value(field, value, user_name):
 
 def update_character_skills(values, user_name):
     conn = db.connect()
-    dirty_skills = db.execute('SELECT Name from Proficiency WHERE Type = \'skill\';').fetchall()
+    dirty_skills = db.execute('SELECT profName from Proficiency WHERE Type = \'skill\';').fetchall()
     skills =[]
     for section in dirty_skills:
         skills.append(section[0])
@@ -480,9 +480,8 @@ def update_character_physical(values, user_name):
 def update_character_bInfo(values, user_name):
     conn = db.connect()
     
-
-    conn.execute('UPDATE User_Character SET PersonalityTraits = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
-    conn.execute('UPDATE User_Character SET Ideals  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
-    conn.execute('UPDATE User_Character SET Bonds  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
-    conn.execute('UPDATE User_Character SET Flaws = \''+values[3]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET PersonalityTraits = \"'+values[0]+'\" WHERE \"'+user_name+'\" = PlayerName;')
+    conn.execute('UPDATE User_Character SET Ideals  = \"'+values[1]+'\" WHERE \"'+user_name+'\" = PlayerName;')
+    conn.execute('UPDATE User_Character SET Bonds  = \"'+values[2]+'\" WHERE \"'+user_name+'\" = PlayerName;')
+    conn.execute('UPDATE User_Character SET Flaws = \"'+values[3]+'\" WHERE \"'+user_name+'\" = PlayerName;')
     conn.close()
