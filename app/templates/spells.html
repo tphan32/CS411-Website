@@ -3,6 +3,7 @@
     Spells
 {% endblock %}
 {% block content %}
+<p></p>
 <input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
 
 <ul></ul>
@@ -52,7 +53,7 @@
                 <td>{{item.Duration}}</td>
                 <td>
                     <details>
-                    <summary> Show Description</summary>
+                    <summary>Description</summary>
                     {{item.description}}
                     </details>
                 </td>

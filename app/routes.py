@@ -39,6 +39,10 @@ def characterSheet():
 def createNewSheet():
     return render_template("/newSheet.html")
 
+@app.route("/explore")
+def explore():
+    return render_template("/explore.html")
+
 @app.route("/updWeapon", methods=["GET","POST"])
 def update_weapon():
     input = []
@@ -68,7 +72,7 @@ def create():
         input.append(weight)
         input.append(properties)
         input.append(category)
-        db_helper.insert_new_task(input)
+        db_helper.insert_weapon(input)
     return redirect("/weapon/")
 
 @app.route("/weapon/")
@@ -88,6 +92,54 @@ def weapon():
             } 
         ]
     return render_template("weapon.html", items = items)
+
+@app.route("/armor/")
+def armor():
+    try:
+        items = db_helper.get_armorInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "cost"   : "error",
+            "armorClass"  : "error",
+            "strNeeded": "error",
+            "stealthDisadv": "error",
+            "weight": "error",
+            "category": "error"
+            } 
+        ]
+    return render_template("armor.html", items = items)
+
+@app.route("/genitem/")
+def genitem():
+    try:
+        items = db_helper.get_genItemInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "price"   : "error",
+            "weight": "error",
+            "category": "error"
+            } 
+        ]
+    return render_template("genitem.html", items = items)
+
+@app.route("/proficiency/")
+def proficiency():
+    try:
+        items = db_helper.get_profInfo()
+    except:
+        items = [
+            {
+            "name"    : "error",
+            "type"   : "error",
+            "subtype": "error",
+            "description": "error"
+            } 
+        ]
+    return render_template("proficiency.html", items = items)
 
 @app.route("/removeWeapon", methods=["POST"])
 def removeWeapon():
@@ -147,7 +199,7 @@ def races():
             "name"    : "error",
             "subrace"   : "error",
             "abilityScoreIncrease1"  : "error",
-            "abilityScoreIncrease1": "error",
+            "abilityScoreIncrease2": "error",
             "ability1": "error",
             "ability2": "error",
             "ageRange": "error",

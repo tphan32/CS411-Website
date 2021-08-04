@@ -69,7 +69,7 @@ def remove_weaponName(target):
     conn.execute(query)
     conn.close()
 
-def insert_new_task(input: List[str]):
+def insert_weapon(input: List[str]):
     conn = db.connect()
     query = 'Insert Into Weapon (weaponName, cost, damage, damageType, weight, properties, category) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}");'.format(
         input[0], int(input[1]), input[2], input[3], int(input[4]), input[5], input[6])
@@ -152,7 +152,7 @@ def get_raceInfo():
             "name"    : result[0],
             "subrace"   : result[1],
             "abilityScoreIncrease1"  : result[2],
-            "abilityScoreIncrease1": result[3],
+            "abilityScoreIncrease2": result[3],
             "ability1": result[4],
             "ability2": result[5],
             "ageRange": result[6],
@@ -190,6 +190,72 @@ def get_bckgInfo():
             "name"    : result[0],
             "description": result[1],
             "equipment": result[2],
+        } 
+        items.append(item)
+    return items
+
+def get_armorInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Armor;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "cost"   : result[1],
+            "armorClass"  : result[2],
+            "strNeeded": result[3],
+            "stealthDisadv": result[4],
+            "weight": result[5],
+            "category": result[6]
+        } 
+        items.append(item)
+    return items
+
+def get_armorInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Armor;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "cost"   : result[1],
+            "armorClass"  : result[2],
+            "strNeeded": result[3],
+            "stealthDisadv": result[4],
+            "weight": result[5],
+            "category": result[6]
+        } 
+        items.append(item)
+    return items
+
+def get_genItemInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM GeneralItem;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "price"   : result[1],
+            "weight"  : result[2],
+            "category": result[3]
+        } 
+        items.append(item)
+    return items
+
+def get_profInfo():
+    conn = db.connect()
+    query_results = conn.execute('SELECT * FROM Proficiency;').fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "type"   : result[1],
+            "subtype"  : result[2],
+            "description": result[3]
         } 
         items.append(item)
     return items
