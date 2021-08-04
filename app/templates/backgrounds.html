@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}
+    Classs
+{% endblock %}
+{% block content %}
+<p></p>
+<input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
+
+<ul></ul>
+
+    <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#Input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#background tr").filter(function() {
+                    $(this).toggle($(this).text()
+                    .toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+    <div class="container">
+    <table id = "Backgrounds" class="table" border = "1" style="width: 100%;">
+        <thead>
+            <tr class = "header">
+                <th style = "background-color: rgb(165, 137, 61)">Name</th>
+                <th style = "background-color: rgb(165, 137, 61)">Description</th>
+                <th style = "background-color: rgb(165, 137, 61)">Equipment</th>
+            </tr>
+            </thead>
+            <tbody id = "background">
+            {% for item in items %}
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td><details>
+                        <summary>Descrption</summary>
+                        {{item.description}}
+                        </details>
+                    </td>
+                    <td>
+                        <details>
+                        <summary>Equipment</summary>
+                        {{item.equipment}}
+                        </details>
+                    </td>
+
+                </tr>
+            {% endfor %}    
+            </tbody>
+
+    </table>
+    </div>
+
+    <!-- <div>
+        <h6> Random A New Class </h6>
+        <form action="/randomNewClass">
+            <input type="submit" value="Random">
+        </form>
+    </div> -->
+
+{% endblock %}

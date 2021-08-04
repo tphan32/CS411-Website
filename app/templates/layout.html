@@ -16,10 +16,19 @@
                 <a class="navbar-brand" href="/">Home</a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a href="{{ url_for('weapon') }}" class="navbar-item">Weapon</a>
+                        <a href="{{ url_for('spells') }}" class="navbar-item">Spells</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('spells') }}" class="navbar-item">Spells</a>
+                        <a href="{{ url_for('classes') }}" class="navbar-item">Classes</a>            
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('races')}}" class="navbar-item">Races</a>            
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('backgrounds')}}" class="navbar-item">Backgrounds</a>            
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('explore')}}" class="navbar-item">Explore More</a>            
                     </li>
                     <li class="nav-item">
                         <a href="{{ url_for('profile') }}" class="navbar-item">Profile</a>            

@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block title %}
+    Classs
+{% endblock %}
+{% block content %}
+<p></p>
+<input onekeyup = "myFunction()" id = "Input" placeholder="Search in Table">
+
+<ul></ul>
+
+    <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#Input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#race tr").filter(function() {
+                    $(this).toggle($(this).text()
+                    .toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+    <div class="container">
+    <table id = "Races" class="table" border = "1" style="width: 100%;">
+        <thead>
+            <tr class = "header">
+                <th style = "background-color: rgb(165, 137, 61)">Name</th>
+                <th style = "background-color: rgb(165, 137, 61)">Subrace</th>
+                <th style = "background-color: rgb(165, 137, 61)">Ability Score Increase 1</th>
+                <th style = "background-color: rgb(165, 137, 61)">Ability Score Increase 2</th>
+                <th style = "background-color: rgb(165, 137, 61)">Ability 1</th>
+                <th style = "background-color: rgb(165, 137, 61)">Ability 2</th>
+                <th style = "background-color: rgb(165, 137, 61)">Age Range</th>
+                <th style = "background-color: rgb(165, 137, 61)">Description</th>
+                <th style = "background-color: rgb(165, 137, 61)">Size</th>
+                <th style = "background-color: rgb(165, 137, 61)">Speed</th>
+            </tr>
+            </thead>
+            <tbody id = "race">
+            {% for item in items %}
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td>{{item.subrace}}</td>
+                    <td>{{item.abilityScoreIncrease1}}</td>
+                    <td>{{item.abilityScoreIncrease2}}</td>
+                    <td>{{item.ability1}}</td>
+                    <td>{{item.ability2}}</td>
+                    <td>
+                        <details>
+                        <summary>Age Range</summary>
+                        {{item.ageRange}}
+                        </details>
+                    </td>
+                    <td>
+                        <details>
+                        <summary> Description</summary>
+                        {{item.description}}
+                        </details>
+                    </td>
+                    <td>{{item.size}}</td>
+                    <td>{{item.speed}}</td>
+                </tr>
+            {% endfor %}    
+            </tbody>
+
+    </table>
+    </div>
+
+    <!-- <div>
+        <h6> Random A New Class </h6>
+        <form action="/randomNewClass">
+            <input type="submit" value="Random">
+        </form>
+    </div> -->
+
+{% endblock %}
