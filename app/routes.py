@@ -630,4 +630,8 @@ def stepPDF():
     db_helper.update_character_prof_mod(session["username"])
     db_helper.update_character_MISC(session["username"])
     db_helper.fillPDF(session["username"])
-    return render_template("createCharacterStepPDF.html")
+
+    char_info, char_info_name = db_helper.get_char_info(session["username"])
+    char_num = len(char_info_name)
+
+    return render_template("createCharacterStepPDF.html", char_info=char_info, char_info_name=char_info_name, char_num=char_num)
