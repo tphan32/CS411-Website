@@ -25,7 +25,28 @@ def remove_account(username):
     except:
         conn.close()
         return "fail"
-    
+
+def call_pro_rand_spell():
+    conn = db.connect()
+    query = "CALL randomNewSpell();"
+    query_results = conn.execute(query).fetchall()
+    conn.close()
+    items = []
+    for result in query_results:
+        item = {
+            "name"    : result[0],
+            "level"   : result[1],
+            "school"  : result[2],
+            "classes": result[3],
+            "Casting_Time": result[4],
+            "spellRange": result[5],
+            "Components": result[6],
+            "Duration": result[7],
+            "description": result[8]
+        } 
+        items.append(item)
+    return items 
+
 def call_pro_rand_weapon():
     conn = db.connect()
     query = "CALL randomNewWeapon();"
