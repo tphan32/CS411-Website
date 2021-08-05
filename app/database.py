@@ -437,7 +437,7 @@ def get_spell_options(DNDclass, level, user_name):
 
         num_to_learn = conn.execute('SELECT cantrips FROM Magic WHERE className = \''+DNDclass+'\' AND level = 1 ').fetchall()
     elif level == 1:
-        if DNDclass == "Fighter":
+        if DNDclass == "Fighter" or DNDclass == "Paladin":
             num_to_learn = [[0]]
         elif DNDclass in ['Bard']:
             num_to_learn = [[4]]
@@ -530,17 +530,58 @@ def update_character_langs(values, user_name):
     conn.close()
 
 def update_character_equipment(values, user_name):
+    conn = db.connect()
+    dirty_armor = conn.execute('SELECT armorName FROM Armor ;').fetchall()
+    armor = []
+    for part in dirty_armor:
+        armor.append(part[0])
+    
+    dirty_AC = conn.execute('SELECT armorClass FROM Armor ;').fetchall()
+    AC = []
+    for part in dirty_AC:
+        AC.append(part[0])
+    print(armor)
+    print(AC)
+    dex_add = [0,2,3,4,5,6,9,12]
+    dex_limit = [0,2,3,4,9]
+    
+    Char_AC = 0
+
+    DEXmod = conn.execute('SELECT DEXmod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()[0][0]
+   
+ 
     words =''
     for part in values:
         word = ''
         for piece in part:
-            if piece not in ["'",'"','/', '[', ']']:
+            if piece not in ["'",'"','/', '[', ']', ',']:
                 word += piece
         words += word + ', '
-    words = words[:len(words)-2]
+        for arm in armor:
+            if arm in word and arm != 'Shield':
+                index = armor.index(arm)
+                Char_AC = int(AC[index][:2])
+                if index in dex_add and index not in dex_limit:
+                    print(Char_AC)
+                    Char_AC += DEXmod
+                    print(Char_AC)
+                elif index in dex_add and index in dex_limit:
+                    if DEXmod > 2:
+                        Char_AC += 2
+                    else:
+                        Char_AC += DEXmod
+            elif 'Shield' in word:
+                Char_AC += 2
 
+    Char_AC = str(Char_AC)
+    conn.execute('UPDATE User_Character SET AC = '+Char_AC+' WHERE \''+user_name+'\' = PlayerName;')
+    
+    
+    
+    words = words[:len(words)-2]
+    
    
-    conn = db.connect()
+    
     conn.execute('UPDATE User_Character SET Equipment = \''+words+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.close()
 
@@ -713,6 +754,11 @@ def update_character_MISC(user_name):
     DNDclass = conn.execute('SELECT ClassLevel FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
     DNDclass= DNDclass[0][0]
     DNDclass = DNDclass[:len(DNDclass)-1]
+
+    DNDrace = conn.execute('SELECT Race FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    DNDrace= DNDrace[0][0]
+
+
     HP = conn.execute('SELECT hitPoints FROM Class WHERE className = \''+DNDclass+'\';').fetchall()
     HP = HP[0][0]
     totalHP = HP + CONmod
@@ -720,10 +766,36 @@ def update_character_MISC(user_name):
     conn.execute('UPDATE User_Character SET HPMax = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET HPCurrent = '+totalHP+' WHERE \''+user_name+'\' = PlayerName;')
 
+    slot = conn.execute('SELECT slotsLvl1 FROM Magic WHERE \''+DNDclass+'\' = className;').fetchall()[0][0]
+    if slot != None: 
+        slot = str(slot)
+    else:
+        slot = 0
+        slot = str(slot)
+    conn.execute('UPDATE User_Character SET SlotsTotal_19 = '+slot+' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET SlotsRemaining_19 = '+slot+' WHERE \''+user_name+'\' = PlayerName;')
+    
+    # ClassFeatures = conn.execute('SELECT featureName, description FROM ClassFeature WHERE \''+DNDclass+'\' = className AND classLevel = 1;').fetchall()
+    # RaceFeatures = conn.execute('SELECT featureName, description FROM RaceFeature WHERE \''+DNDrace+'\' = raceName;').fetchall()
+    
+    # ClassFeatures =str(ClassFeatures)
+
+
+    # conn.execute('UPDATE User_Character SET Features_and_Traits = \''+ClassFeatures+'\' WHERE \''+user_name+'\' = PlayerName;')
+    # conn.execute('UPDATE User_Character SET FeatANDTraits = \' '+RaceFeatures+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.close()
+
+
+def get_char_info(user_name):
+    conn = db.connect()
+    char_info = conn.execute('SELECT * FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()
+    char_info_name = conn.execute('SHOW COLUMNS FROM User_Character;').fetchall()
+    conn.close()
+    return char_info, char_info_name
 
 def fillPDF(username):
     pdf_template = "CHAR.pdf"
-    pdf_output = "output.pdf"
+    pdf_output = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\Output.pdf"
     path = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\CHAR.pdf"
 
     template_pdf = pdfrw.PdfReader(path)
@@ -746,29 +818,159 @@ def fillPDF(username):
 
     conn = db.connect()
     data_dict = {
-        'PlayerName': 'Max',
-        'CharacterName': 'Dumbledore',
-        'ClassLevel': 'Wizard' + ' Level 1',
-        'Background': 'Criminal',
-        'Race': 'Human',
-        'Alignment': 'Chaotic Good',
-        'Check Box 11': True,
-        'Check Box 18': True
+        'PlayerName': conn.execute('SELECT PlayerName FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CharacterName': conn.execute('SELECT CharacterName FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CharacterName 2': conn.execute('SELECT CharacterName FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ClassLevel': conn.execute('SELECT ClassLevel FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0], #+ ' Level 1'
+        'Background': conn.execute('SELECT Background FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Race ': conn.execute('SELECT Race FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Alignment': conn.execute('SELECT Alignment FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'STR': conn.execute('SELECT STR FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'DEX': conn.execute('SELECT DEX FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CON': conn.execute('SELECT CON FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'INT': conn.execute('SELECT INTT FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'WIS': conn.execute('SELECT WIS FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CHA': conn.execute('SELECT CHA FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'STRmod': conn.execute('SELECT STRmod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'DEXmod ': conn.execute('SELECT DEXmod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CONmod': conn.execute('SELECT CONmod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'INTmod': conn.execute('SELECT INTmod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'WISmod': conn.execute('SELECT WISmod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'CHamod': conn.execute('SELECT CHamod FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        
+        'ProfBonus': conn.execute('SELECT ProfBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Check Box 11': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 18': conn.execute('SELECT Check_Box_18 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 19': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 20': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 21': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 22': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'ST Strength': conn.execute('SELECT ST_Strength FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ST Dexterity': conn.execute('SELECT ST_Dexterity FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ST Constitution': conn.execute('SELECT ST_Constitution FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ST Intelligence': conn.execute('SELECT ST_Intelligence FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ST Wisdom': conn.execute('SELECT ST_Wisdom FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ST Charisma': conn.execute('SELECT ST_Charisma FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Check Box 23': conn.execute('SELECT Check_Box_23 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 24': conn.execute('SELECT Check_Box_24 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 25': conn.execute('SELECT Check_Box_25 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 26': conn.execute('SELECT Check_Box_26 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 27': conn.execute('SELECT Check_Box_27 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 28': conn.execute('SELECT Check_Box_28 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 29': conn.execute('SELECT Check_Box_29 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 30': conn.execute('SELECT Check_Box_30 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 31': conn.execute('SELECT Check_Box_31 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 32': conn.execute('SELECT Check_Box_32 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 33': conn.execute('SELECT Check_Box_33 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 34': conn.execute('SELECT Check_Box_34 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 35': conn.execute('SELECT Check_Box_35 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 36': conn.execute('SELECT Check_Box_36 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 37': conn.execute('SELECT Check_Box_37 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 38': conn.execute('SELECT Check_Box_38 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 39': conn.execute('SELECT Check_Box_39 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 40': conn.execute('SELECT Check_Box_40 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Acrobatics': conn.execute('SELECT Acrobatics FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Animal': conn.execute('SELECT Animal_Handling FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Arcana': conn.execute('SELECT Arcana FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Athletics': conn.execute('SELECT Athletics FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Deception ': conn.execute('SELECT Deception FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'History': conn.execute('SELECT History FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Insight': conn.execute('SELECT Insight FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Intimidation': conn.execute('SELECT Intimidation FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Investigation ': conn.execute('SELECT Investigation FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Medicine': conn.execute('SELECT Medicine FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Nature': conn.execute('SELECT Nature FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Perception ': conn.execute('SELECT Perception FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Performance': conn.execute('SELECT Performance FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Persuasion': conn.execute('SELECT Persuasion FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Religion': conn.execute('SELECT Religion FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'SleightofHand': conn.execute('SELECT Sleight_of_Hand FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Stealth ': conn.execute('SELECT Stealth FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Survival': conn.execute('SELECT Survival FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Passive': conn.execute('SELECT Passive FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'ProficienciesLang': conn.execute('SELECT ProficienciesLang FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'AC': conn.execute('SELECT AC FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Initiative': conn.execute('SELECT Initiative FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Speed': conn.execute('SELECT Speed FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'HPMax': conn.execute('SELECT HPMax FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'HPCurrent': conn.execute('SELECT HPCurrent FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Wpn Name': conn.execute('SELECT Wpn_Name FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn1 AtkBonus': conn.execute('SELECT Wpn1_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn1 Damage': conn.execute('SELECT Wpn1_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        
+        'Wpn Name 2': conn.execute('SELECT Wpn_Name2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn2 AtkBonus': conn.execute('SELECT Wpn2_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn2 Damage': conn.execute('SELECT Wpn2_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Wpn Name 3': conn.execute('SELECT Wpn_Name3 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn3 AtkBonus': conn.execute('SELECT Wpn3_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn3 Damage': conn.execute('SELECT Wpn3_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'AttacksSpellcasting': conn.execute('SELECT AttacksSpellcasting FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Equipment': conn.execute('SELECT Equipment FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'PersonalityTraits ': conn.execute('SELECT PersonalityTraits FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Ideals': conn.execute('SELECT Ideals FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Bonds': conn.execute('SELECT Bonds FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Flaws': conn.execute('SELECT Flaws FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Features and Traits': conn.execute('SELECT Features_and_Traits FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Age': conn.execute('SELECT Age FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Height': conn.execute('SELECT Height FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Weight': conn.execute('SELECT Weightt FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Eyes': conn.execute('SELECT Eyes FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Skin': conn.execute('SELECT Skin FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Hair': conn.execute('SELECT Hair FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Backstory': conn.execute('SELECT Backstory FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Feat+Traits': conn.execute('SELECT FeatANDTraits FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Spellcasting Class 2': conn.execute('SELECT Spellcasting_Class_2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'SpellcastingAbility 2': conn.execute('SELECT SpellcastingAbility_2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'SpellSaveDC  2': conn.execute('SELECT SpellSaveDC_2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'SpellAtkBonus 2': conn.execute('SELECT SpellAtkBonus_2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Spells 1014': conn.execute('SELECT Spells_1014 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1016': conn.execute('SELECT Spells_1016 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1017': conn.execute('SELECT Spells_1017 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1018': conn.execute('SELECT Spells_1018 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'SlotsTotal 19': conn.execute('SELECT SlotsTotal_19 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'SlotsRemaining 19': conn.execute('SELECT SlotsRemaining_19 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+
+        'Spells 1015': conn.execute('SELECT Spells_1014 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1023': conn.execute('SELECT Spells_1023 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1024': conn.execute('SELECT Spells_1024 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1025': conn.execute('SELECT Spells_1025 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1026': conn.execute('SELECT Spells_1026 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1027': conn.execute('SELECT Spells_1027 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0]
     }
 
     conn.close()
 
+    for part in data_dict:
+        print(part,data_dict[part], type(data_dict[part]))
+
     def fill_pdf(input_pdf_path, output_pdf_path, data_dict):
         template_pdf = pdfrw.PdfReader(input_pdf_path)
+        template_pdf.Root.AcroForm.update(pdfrw.PdfDict(NeedAppearances=pdfrw.PdfObject('true')))
         for page in template_pdf.pages:
             annotations = page[ANNOT_KEY]
             for annotation in annotations:
                 if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
                     if annotation[ANNOT_FIELD_KEY]:
                         key = annotation[ANNOT_FIELD_KEY][1:-1]
+                        print('key',key + 'lol')
                         if key in data_dict.keys():
-                            if type(data_dict[key]) == bool:
-                                if data_dict[key] == True:
+                            if type(data_dict[key]) == bytes:
+                                if data_dict[key] == b'\x00':
                                     annotation.update(pdfrw.PdfDict(
                                         AS=pdfrw.PdfName('Yes')))
                             else:

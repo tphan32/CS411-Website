@@ -1,9 +1,24 @@
 {% extends "layout.html" %}
 {% block title %}
-    Character Creation Step 8:
+    Character Creation Step PDF:
 {% endblock %}
 {% block content %}
 
 We will have a pdf here!
 
+
+
+
+<table>
+
+    
+    {%for part in range(114)%}
+    <tr>
+        <td id = "modSTR"> {{char_info_name[part][0]}} </td>
+        <td id = "modSTR"> {{char_info[0][part]}} </td> 
+
+    </tr>
+    {% endfor %}
+
+</table>
 {% endblock %}
