@@ -353,7 +353,7 @@ def get_background_name():
             "name"    : result[0],
         } 
         backgrounds.append(item)
-    print(backgrounds)
+
     return backgrounds
     
 def get_skills_name(from_where):
@@ -441,6 +441,13 @@ def get_spell_options(DNDclass, level, user_name):
             num_to_learn = [[0]]
         elif DNDclass in ['Bard']:
             num_to_learn = [[4]]
+            ABBB = conn.execute('SELECT Chamod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
+            save = str(ABBB[0][0] + 10)
+            atk = str(ABBB[0][0] + 12)
+            conn.execute('UPDATE User_Character SET SpellcastingAbility_2 = \'CHA\' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellSaveDC_2 = '+save+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET SpellAtkBonus_2 = '+atk+' WHERE \''+user_name+'\' = PlayerName;')
+            conn.execute('UPDATE User_Character SET Spellcasting_Class_2 = \''+DNDclass+'\' WHERE \''+user_name+'\' = PlayerName;')
         elif DNDclass in ['Cleric','Druid']:
             num_to_learn = conn.execute('SELECT WISmod FROM User_Character WHERE \''+user_name+'\' = PlayerName').fetchall()
             save = str(num_to_learn[0][0] + 10)
@@ -540,16 +547,16 @@ def update_character_equipment(values, user_name):
     AC = []
     for part in dirty_AC:
         AC.append(part[0])
-    print(armor)
-    print(AC)
+
     dex_add = [0,2,3,4,5,6,9,12]
     dex_limit = [0,2,3,4,9]
     
-    Char_AC = 0
+    
 
     DEXmod = conn.execute('SELECT DEXmod FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()[0][0]
    
- 
+    Char_AC = 10 + DEXmod
+
     words =''
     for part in values:
         word = ''
@@ -562,16 +569,17 @@ def update_character_equipment(values, user_name):
                 index = armor.index(arm)
                 Char_AC = int(AC[index][:2])
                 if index in dex_add and index not in dex_limit:
-                    print(Char_AC)
+
                     Char_AC += DEXmod
-                    print(Char_AC)
+
                 elif index in dex_add and index in dex_limit:
                     if DEXmod > 2:
                         Char_AC += 2
                     else:
                         Char_AC += DEXmod
-            elif 'Shield' in word:
+            if 'Shield' in word:
                 Char_AC += 2
+
 
     Char_AC = str(Char_AC)
     conn.execute('UPDATE User_Character SET AC = '+Char_AC+' WHERE \''+user_name+'\' = PlayerName;')
@@ -580,9 +588,45 @@ def update_character_equipment(values, user_name):
     
     words = words[:len(words)-2]
     
-   
+    BG = conn.execute('SELECT Background FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()[0][0]
+    BGEquip = conn.execute('SELECT equipment FROM Background WHERE bgName = \''+BG+'\';').fetchall()[0][0]
     
+    words += "\n\n" + BGEquip 
     conn.execute('UPDATE User_Character SET Equipment = \''+words+'\' WHERE \''+user_name+'\' = PlayerName;')
+    
+    
+    
+    dirty_weapons = conn.execute('SELECT WeaponName, damage, damageType FROM Weapon ;').fetchall()
+    WpnName = []
+    WpnDmg = []
+    WpnDmgType = []
+    for weaponInfo in dirty_weapons:
+        if weaponInfo[0] in words:
+            WpnName.append(weaponInfo[0])
+            WpnDmg.append(weaponInfo[1])
+            WpnDmgType.append(weaponInfo[2])
+    print(WpnName)
+    print(WpnDmg)
+    print(WpnDmgType)
+    
+    if len(WpnName) > 0:
+        conn.execute('UPDATE User_Character SET Wpn_Name = \''+WpnName[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn1_AtkBonus = \''+WpnDmg[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn1_Damage = \''+WpnDmgType[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    if len(WpnName) > 1:
+        conn.execute('UPDATE User_Character SET Wpn_Name2 = \''+WpnName[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn2_AtkBonus = \''+WpnDmg[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn2_Damage = \''+WpnDmgType[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    if len(WpnName) > 2:
+        conn.execute('UPDATE User_Character SET Wpn_Name3 = \''+WpnName[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn3_AtkBonus = \''+WpnDmg[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
+        conn.execute('UPDATE User_Character SET Wpn3_Damage = \''+WpnDmgType[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
+
+
+
+    
+
+
     conn.close()
 
 
@@ -631,10 +675,20 @@ def update_character_bInfo(values, user_name):
                 thing += piece
         values[values.index(part)] = thing                
 
+    back = conn.execute('SELECT Background FROM User_Character WHERE \''+user_name+'\' = PlayerName;').fetchall()[0][0]
+    backstory = conn.execute('SELECT description FROM Background WHERE bgName = \''+back+'\';').fetchall()[0][0]
+
+    new_backstory = ''
+    for piece in backstory:
+        if piece == "'":
+            new_backstory += "''"
+        else:
+            new_backstory += piece 
     conn.execute('UPDATE User_Character SET PersonalityTraits = \''+values[0]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Ideals  = \''+values[1]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Bonds  = \''+values[2]+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET Flaws = \''+values[3]+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Backstory = \''+new_backstory+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.close()
 
 def update_character_ST(user_name):
@@ -708,7 +762,7 @@ def update_character_prof_mod(user_name):
         'Check_Box_30','Check_Box_31','Check_Box_32','Check_Box_33','Check_Box_34','Check_Box_35','Check_Box_36','Check_Box_37',\
             'Check_Box_38','Check_Box_39','Check_Box_40']
 
-    print(skills)
+
     #AB link skill
     skillSTR = ['Athletics']
     skillDEX = ['Acrobatics','Sleight of Hand','Stealth']
@@ -740,6 +794,9 @@ def update_character_prof_mod(user_name):
 
 
                 conn.execute('UPDATE User_Character SET '+ newUnderSkill +' = '+value+' WHERE \''+user_name+'\' = PlayerName;')
+    passive = ABMOD[4]+10
+    passive = str(passive)
+    conn.execute('UPDATE User_Character SET Passive = '+passive+' WHERE \''+user_name+'\' = PlayerName;')
 
 def update_character_MISC(user_name):
     conn = db.connect()
@@ -775,14 +832,36 @@ def update_character_MISC(user_name):
     conn.execute('UPDATE User_Character SET SlotsTotal_19 = '+slot+' WHERE \''+user_name+'\' = PlayerName;')
     conn.execute('UPDATE User_Character SET SlotsRemaining_19 = '+slot+' WHERE \''+user_name+'\' = PlayerName;')
     
-    # ClassFeatures = conn.execute('SELECT featureName, description FROM ClassFeature WHERE \''+DNDclass+'\' = className AND classLevel = 1;').fetchall()
-    # RaceFeatures = conn.execute('SELECT featureName, description FROM RaceFeature WHERE \''+DNDrace+'\' = raceName;').fetchall()
+    ClassFeatures = conn.execute('SELECT featureName, description FROM ClassFeature WHERE \''+DNDclass+'\' = className AND classLevel = 1;').fetchall()
+    RaceFeatures = conn.execute('SELECT featureName, description FROM RaceFeature WHERE \''+DNDrace+'\' = raceName;').fetchall()
     
-    # ClassFeatures =str(ClassFeatures)
+    new_class_features = ''
+    for feature in ClassFeatures:
+        if feature[0] != 'Spellcasting':
+            new_feature = ''
+            for piece in feature[1]:
+                if piece == "'":
+                    new_feature += "''"
+                else:
+                    new_feature += piece 
+            new_class_features += feature[0]+ ": " +new_feature + '     \n\n'
+
+    new_race_features = ''
+    for feature in RaceFeatures:
+            new_feature = ''
+            for piece in feature[1]:
+                if piece == "'":
+                    new_feature += "''"
+                else:
+                    new_feature += piece 
+            new_race_features += feature[0]+ ": " +feature[1] + '     \n\n'
+
+    print(len(new_class_features))
+    print(len(new_race_features))
 
 
-    # conn.execute('UPDATE User_Character SET Features_and_Traits = \''+ClassFeatures+'\' WHERE \''+user_name+'\' = PlayerName;')
-    # conn.execute('UPDATE User_Character SET FeatANDTraits = \' '+RaceFeatures+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET  FeatANDTraits = \''+new_class_features+'\' WHERE \''+user_name+'\' = PlayerName;')
+    conn.execute('UPDATE User_Character SET Features_and_Traits = \' '+new_race_features+'\' WHERE \''+user_name+'\' = PlayerName;')
     conn.close()
 
 
@@ -795,7 +874,7 @@ def get_char_info(user_name):
 
 def fillPDF(username):
     pdf_template = "CHAR.pdf"
-    pdf_output = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\Output.pdf"
+    pdf_output = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\templates\\Output.pdf"
     path = "C:\\Users\\jtw19\\Documents\\github\\DndWebsite\\CS411-Website\\app\\CHAR.pdf"
 
     template_pdf = pdfrw.PdfReader(path)
@@ -843,10 +922,10 @@ def fillPDF(username):
 
         'Check Box 11': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'Check Box 18': conn.execute('SELECT Check_Box_18 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Check Box 19': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Check Box 20': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Check Box 21': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Check Box 22': conn.execute('SELECT Check_Box_11 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 19': conn.execute('SELECT Check_Box_19 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 20': conn.execute('SELECT Check_Box_20 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 21': conn.execute('SELECT Check_Box_21 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Check Box 22': conn.execute('SELECT Check_Box_22 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
 
         'ST Strength': conn.execute('SELECT ST_Strength FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'ST Dexterity': conn.execute('SELECT ST_Dexterity FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
@@ -906,12 +985,12 @@ def fillPDF(username):
         'Wpn1 Damage': conn.execute('SELECT Wpn1_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         
         'Wpn Name 2': conn.execute('SELECT Wpn_Name2 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Wpn2 AtkBonus': conn.execute('SELECT Wpn2_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Wpn2 Damage': conn.execute('SELECT Wpn2_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn2 AtkBonus ': conn.execute('SELECT Wpn2_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn2 Damage ': conn.execute('SELECT Wpn2_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
 
         'Wpn Name 3': conn.execute('SELECT Wpn_Name3 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Wpn3 AtkBonus': conn.execute('SELECT Wpn3_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
-        'Wpn3 Damage': conn.execute('SELECT Wpn3_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn3 AtkBonus  ': conn.execute('SELECT Wpn3_AtkBonus FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Wpn3 Damage ': conn.execute('SELECT Wpn3_Damage FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
 
         'AttacksSpellcasting': conn.execute('SELECT AttacksSpellcasting FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'Equipment': conn.execute('SELECT Equipment FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
@@ -945,7 +1024,7 @@ def fillPDF(username):
         'SlotsTotal 19': conn.execute('SELECT SlotsTotal_19 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'SlotsRemaining 19': conn.execute('SELECT SlotsRemaining_19 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
 
-        'Spells 1015': conn.execute('SELECT Spells_1014 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
+        'Spells 1015': conn.execute('SELECT Spells_1015 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'Spells 1023': conn.execute('SELECT Spells_1023 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'Spells 1024': conn.execute('SELECT Spells_1024 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
         'Spells 1025': conn.execute('SELECT Spells_1025 FROM User_Character WHERE \''+username+'\' = PlayerName;').fetchall()[0][0],
@@ -955,8 +1034,8 @@ def fillPDF(username):
 
     conn.close()
 
-    for part in data_dict:
-        print(part,data_dict[part], type(data_dict[part]))
+    #for part in data_dict:
+        #print(part,data_dict[part], type(data_dict[part]))
 
     def fill_pdf(input_pdf_path, output_pdf_path, data_dict):
         template_pdf = pdfrw.PdfReader(input_pdf_path)
@@ -967,10 +1046,10 @@ def fillPDF(username):
                 if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
                     if annotation[ANNOT_FIELD_KEY]:
                         key = annotation[ANNOT_FIELD_KEY][1:-1]
-                        print('key',key + 'lol')
+                        #print('key',key + 'lol')
                         if key in data_dict.keys():
                             if type(data_dict[key]) == bytes:
-                                if data_dict[key] == b'\x00':
+                                if data_dict[key] == b'\x01':
                                     annotation.update(pdfrw.PdfDict(
                                         AS=pdfrw.PdfName('Yes')))
                             else:
@@ -981,3 +1060,4 @@ def fillPDF(username):
         pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
 
     fill_pdf(path, pdf_output, data_dict)
+
